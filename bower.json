@@ -1,0 +1,25 @@
+{
+  "name": "trackView",
+  "version": "1.0.0",
+  "description": "Track View demo application",
+  "authors": [
+    {
+      "name": "Golovnya Alexander"
+    }
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "vendor",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "*",
+    "bootstrap": "~3.3.2",
+    "react": "*"
+  }
+}

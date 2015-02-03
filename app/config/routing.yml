@@ -1,0 +1,8 @@
+golovnya_track:
+    resource: "@GolovnyaTrackBundle/Controller/"
+    type:     annotation
+    prefix:   /
+
+app:
+    resource: @AppBundle/Controller/
+    type:     annotation

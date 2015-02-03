@@ -32,3 +32,6 @@
 
 # Composer PHAR
 /composer.phar
+
+# Bower
+/src/Golovnya/TrackBundle/Resources/public/vendor
