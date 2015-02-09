@@ -43,7 +43,7 @@ describe("selected playlist", function() {
     expect(playlist.getDOMNode().options.length).toBeGreaterThan(1);
   });
 
-  it("select first option - then table is not empty", function() {
+  it("select second option - then table is not empty", function() {
     var classNameToBeHide = 'sr-only',
       rowsInPlaylistTable = 2,
       opacityElemHidden = '',
@@ -66,6 +66,34 @@ describe("selected playlist", function() {
     var hrefArr = TestUtils.scryRenderedDOMComponentsWithTag(
       nav, 'a');
     expect(hrefArr.length).toEqual(hrefPrevNextAnd4Elem);
+
+    var trackOrder = TestUtils.findRenderedComponentWithType(
+      filterableTrackTable, TrackOrder);
+    var activeOrderButtons = TestUtils.scryRenderedDOMComponentsWithClass(
+      trackOrder, 'active');
+    expect(activeOrderButtons.length).toBe(1);
+  });
+
+  it("filter existing track", function() {
+    var orderButtons = TestUtils.scryRenderedDOMComponentsWithTag(
+      filterableTrackTable, 'button');
+
+    var descNameButtonNumber = 1;
+    var descNameButton = orderButtons[descNameButtonNumber];
+    TestUtils.Simulate.click(descNameButton);
+
+    var nav = TestUtils.findRenderedDOMComponentWithTag(
+      filterableTrackTable, 'nav');
+    var hrefArr = TestUtils.scryRenderedDOMComponentsWithTag(
+      nav, 'a');
+
+    var page3Number = 3;
+    var page3 = hrefArr[page3Number];
+    TestUtils.Simulate.click(page3);
+
+    var row = TestUtils.findRenderedComponentWithType(
+      filterableTrackTable, TrackRow);
+    expect(row.props.track.name).toBe('name4');
   });
 
   it("filter existing track", function() {

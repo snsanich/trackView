@@ -20,6 +20,9 @@
   "dependencies": {
     "jquery": "*",
     "bootstrap": "~3.3.2",
-    "react": "*"
+    "react": "*",
+    "html5shiv": "*",
+    "respond": "~1.4.2",
+    "jasmine": "*"
   }
 }

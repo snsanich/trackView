@@ -35,3 +35,11 @@
 
 # Bower
 /src/Golovnya/TrackBundle/Resources/public/vendor
+
+# ReactJs
+/src/Golovnya/TrackBundle/Resources/public/js/build/.module-cache
+
+# Vim files
+*.swp
+*~
+*.swo

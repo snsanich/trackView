@@ -19,194 +19,67 @@ var TrackRow = React.createClass({
   }
 });
 
-var FilterableTrackTable = React.createClass({
-  getInitialState: function(){
+var TrackOrder = React.createClass({
+  getInitialProps: function(){
     return {
-      filterPlaylist: '',
-      filterTrack: ''
-    }
+      fields: {},
+      orderPattern: ""
+    };
   },
-  getTracks: function(filterPlaylist){
+  handleOrder: function(e){
+    var orderPattern = e.currentTarget.getAttribute('data-order-pattern');
+    if (!orderPattern || orderPattern === null){
+      return true;
+    }
+    e.preventDefault();
+    this.props.onChangeOrder(
+      orderPattern
+    );
+    return false;
+  },
+  render: function(){
+    var columns = [];
+    this.props.fields.forEach(function(field){
 
-    var PLAYLISTS = [
-      { "name": "Playlist1", "tracks": [
-        { "name": "name1", "duration": null, "producer": null, genres: null },
-        { "name": "name2", "duration": "ve2", "producer": null, genres: null },
-        { "name": "name3", "duration": "ve3", "producer": null, genres: null }
-      ] },
-      { "name": "Playlist2", "tracks": [
-        { "name": "name1", "duration": null, "producer": null, genres: null },
-        { "name": "name4", "duration": "ve4", "producer": null, genres: null },
-        { "name": "name5", "duration": "ve5", "producer": null, genres: null },
-        { "name": "name2", "duration": "ve2", "producer": null, genres: null }
-      ] }
-    ];
+      var buttons = [];
 
-    var tracks = [];
-    PLAYLISTS.forEach(function(playlist){
-      if (filterPlaylist == playlist.name){
-        tracks = playlist.tracks;
-        return;
+      var buttonClassName = "btn btn-default btn-xs";
+      var fieldname = field.name;
+      var orderPattern = fieldname + ':ASC';
+      if (this.props.orderPattern === orderPattern){
+        buttonClassName = "active " + buttonClassName;
       }
-    }.bind(this));
+      buttons.push(
+        <button
+          type="button"
+          className={buttonClassName}
+          data-order-pattern={orderPattern}
+          onClick={this.handleOrder}>asc<span className="glyphicon glyphicon-chevron-up" aria-hidden="true"></span></button>
+      );
 
-    return tracks;
-  },
-  handleUserInput: function(filterPlaylist, filterTrack){
+      buttonClassName = "btn btn-default btn-xs";
+      orderPattern = fieldname + ':DESC';
+      if (this.props.orderPattern === orderPattern){
+        buttonClassName = "active " + buttonClassName;
+      }
+      buttons.push(
+        <button
+          type="button"
+          className={buttonClassName}
+          data-order-pattern={orderPattern}
+          onClick={this.handleOrder}>desc<span className="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>
+        </button>
+      );
 
-    var tracksArr = this.getTracks(filterPlaylist);
-
-    this.setState({
-      filterPlaylist: filterPlaylist,
-      filterTrack: filterTrack,
-      tracks: tracksArr
-    });
-  },
-  componentDidMount: function() {
-
-    var tracksArr = this.getTracks(this.state.filterPlaylist);
-    this.setState({
-      tracks: tracksArr
-    });
-  },
-  render: function(){
-    return (
-      <div className="filterableTrackTable">
-        <FilterForm 
-          filterPlaylist={this.state.filterPlaylist}
-          filterTrack={this.state.filterTrack}
-          playlists={this.props.playlists}
-          onUserInput={this.handleUserInput} />
-        <TrackTable
-          filterPlaylist={this.state.filterPlaylist}
-          filterTrack={this.state.filterTrack}
-          rowsInPage={this.props.rowsInPage}
-          tracks={this.state.tracks} />
-      </div>
-    );
-  }
-});
-
-var FilterForm = React.createClass({
-  handleChange: function(){
-    this.props.onUserInput(
-      this.refs.filterPlaylist.getDOMNode().value,
-      this.refs.filterTrack.getDOMNode().value
-    );
-  },
-  render: function(){
-
-    var options = [];
-    options.push(<option value="">Choose Playlist</option>);
-
-    this.props.playlists.forEach(function(playlist){
-      options.push(<option value={playlist.name}>{playlist.name}</option>);
+      columns.push(
+        <th><span>{field.descr} </span>
+          <div className="columnOrderButtons">{buttons}</div>
+        </th>
+      );
     }.bind(this));
 
     return (
-      <form>
-        <div className="form-group">
-          <label className="control-label" for="filterPlaylist">Filter Playlist</label>
-          <select
-            className="form-control"
-            type="text"
-            value={this.props.filterPlaylist}
-            id="filterPlaylist"
-            ref="filterPlaylist"
-            onChange={this.handleChange}>{options}</select>
-        </div>
-        <div className="form-group">
-          <label className="control-label" for="filterTrack">Filter Tracks</label>
-          <input
-            className="form-control"
-            type="text"
-            placeholder="Filter track..."
-            value={this.props.filterTrack}
-            id="filterTrack"
-            ref="filterTrack"
-            onChange={this.handleChange} />
-        </div>
-      </form>
-    );
-  }
-});
-
-var TrackTable = React.createClass({
-  getInitialState: function(){
-    return {
-      page: 1
-    }
-  },
-  handleChangePage: function(page){
-    this.setState({
-      page: page
-    });
-  },
-/**
- * Filter all rows
- */
-  getFilteredRows: function(){
-    var rows = [];
-
-    if (this.props.tracks && this.props.tracks.length > 0) {
-      this.props.tracks.forEach(function(track){
-        if (track.name.indexOf(this.props.filterTrack) !== -1){
-          rows.push(<TrackRow track={track} />);
-        }
-      }.bind(this));
-    }
-
-    return rows;
-  },
-  orderRows: function(rows){
-    return rows;
-  },
-  filterByPage: function(rows){
-    var rowsInPageInt = Number.parseInt(this.props.rowsInPage);
-    var minRow = (this.state.page - 1) * rowsInPageInt;
-    if (minRow < 0){
-      minRow = 0;
-    }
-    if (rows.length <= minRow){
-      this.state.page = 1;
-      minRow = 0;
-    }
-    var start = minRow;
-    var finish = (minRow + rowsInPageInt);
-    if (finish > rows.length){
-      finish = rows.length;
-    }
-    return rows.slice(start, finish);
-  },
-  render: function(){
-    var filteredRows = this.getFilteredRows();
-    var orderedRows = this.orderRows(filteredRows);
-    var rows = this.filterByPage(filteredRows);
-    var rowsCount = filteredRows.length;
-    
-    if (rows.length){
-      rows.splice(0, 0, <PlayListRow name={this.props.filterPlaylist} />);
-    }
-
-    return (
-      <div>
-        <table className="table trackTable">
-          <thead>
-            <tr>
-              <TrackOrder name="Playlist/Track's name" field="name" />
-              <TrackOrder name="duration" field="duration" />
-              <TrackOrder name="Producer" field="producer" />
-              <TrackOrder name="Genres" field="genres" />
-            </tr>
-          </thead>
-          <tbody>{rows}</tbody>
-        </table>
-        <NavigationWheel
-          rowsInPage={this.props.rowsInPage}
-          rowsCount={rowsCount}
-          onChangePage={this.handleChangePage}
-          page={this.state.page} />
-      </div>
+      <tr>{columns}</tr>
     );
   }
 });
@@ -221,7 +94,7 @@ var NavigationWheel = React.createClass({
   },
   handlePage: function(e){
     e.preventDefault();
-    var pageStr = e.target.getAttribute('data-page-number');
+    var pageStr = e.currentTarget.getAttribute('data-page-number');
     var pageInt = Number.parseInt(pageStr);
     this.props.onChangePage(
       pageInt
@@ -294,19 +167,220 @@ var NavigationWheel = React.createClass({
   }
 });
 
-
-var TrackOrder = React.createClass({
+var FilterForm = React.createClass({
+  handleChange: function(){
+    this.props.onUserInput(
+      this.refs.filterPlaylist.getDOMNode().value,
+      this.refs.filterTrack.getDOMNode().value
+    );
+  },
   render: function(){
+
+    var options = [];
+    options.push(<option value="">Choose Playlist</option>);
+
+    this.props.playlists.forEach(function(playlist){
+      options.push(<option value={playlist.name}>{playlist.name}</option>);
+    }.bind(this));
+
     return (
-      <th><span>{this.props.name} </span>
-        <div className="columnOrderButtons">
-          <button type="button" className="active btn btn-default btn-xs">asc<span className="glyphicon glyphicon-chevron-up" aria-hidden="true"></span></button>
-          <button type="button" className="btn btn-default btn-xs">desc<span className="glyphicon glyphicon-chevron-down" aria-hidden="true"></span></button>
+      <form>
+        <div className="form-group">
+          <label className="control-label" for="filterPlaylist">Filter Playlist</label>
+          <select
+            className="form-control"
+            type="text"
+            value={this.props.filterPlaylist}
+            id="filterPlaylist"
+            ref="filterPlaylist"
+            onChange={this.handleChange}>{options}</select>
         </div>
-      </th>
+        <div className="form-group">
+          <label className="control-label" for="filterTrack">Filter Tracks</label>
+          <input
+            className="form-control"
+            type="text"
+            placeholder="Filter track..."
+            value={this.props.filterTrack}
+            id="filterTrack"
+            ref="filterTrack"
+            onChange={this.handleChange} />
+        </div>
+      </form>
     );
   }
 });
+
+var TrackTable = React.createClass({
+  getInitialState: function(){
+    return {
+      page: 1,
+      orderPattern: 'name:ASC'
+    }
+  },
+  handleChangeOrder: function(orderPattern){
+    this.setState({
+      orderPattern: orderPattern
+    });
+  },
+  handleChangePage: function(page){
+    this.setState({
+      page: page
+    });
+  },
+  fields: [
+    { descr:"Playlist/Track's name", name:"name" },
+    { descr:"duration", name:"duration" },
+    { descr:"Producer", name:"producer" },
+    { descr:"Genres", name:"genres" }
+  ],
+/**
+ * Filter all rows
+ */
+  getFilteredRows: function(){
+    var rows = [];
+
+    if (this.props.tracks && this.props.tracks.length > 0) {
+      this.props.tracks.forEach(function(track){
+        if (track.name.indexOf(this.props.filterTrack) !== -1){
+          rows.push(<TrackRow track={track} />);
+        }
+      }.bind(this));
+    }
+
+    return rows;
+  },
+  orderRows: function(rows){
+    var orderParts = this.state.orderPattern.split(':');
+    var orderName = orderParts[0];
+    var orderDest = orderParts[1] === 'ASC' ? 1 : -1;
+    rows.sort(function(a, b){
+      if (a.props.track[orderName] < b.props.track[orderName]){
+        return -1 * orderDest;
+      }
+      if (a.props.track[orderName] > b.props.track[orderName]){
+        return 1 * orderDest;
+      }
+      return 0;
+    });
+    return rows;
+  },
+  filterByPage: function(rows){
+    var rowsInPageInt = Number.parseInt(this.props.rowsInPage);
+    var minRow = (this.state.page - 1) * rowsInPageInt;
+    if (minRow < 0){
+      minRow = 0;
+    }
+    if (rows.length <= minRow){
+      this.state.page = 1;
+      minRow = 0;
+    }
+    var start = minRow;
+    var finish = (minRow + rowsInPageInt);
+    if (finish > rows.length){
+      finish = rows.length;
+    }
+    return rows.slice(start, finish);
+  },
+  render: function(){
+    var filteredRows = this.getFilteredRows();
+    var orderedRows = this.orderRows(filteredRows);
+    var rows = this.filterByPage(filteredRows);
+    var rowsCount = filteredRows.length;
+    
+    if (rows.length){
+      rows.splice(0, 0, <PlayListRow name={this.props.filterPlaylist} />);
+    }
+
+    return (
+      <div>
+        <table className="table trackTable">
+          <thead>
+            <TrackOrder
+              fields={this.fields}
+              orderPattern={this.state.orderPattern}
+              onChangeOrder={this.handleChangeOrder} />
+          </thead>
+          <tbody>{rows}</tbody>
+        </table>
+        <NavigationWheel
+          rowsInPage={this.props.rowsInPage}
+          rowsCount={rowsCount}
+          onChangePage={this.handleChangePage}
+          page={this.state.page} />
+      </div>
+    );
+  }
+});
+
+var FilterableTrackTable = React.createClass({
+  getInitialState: function(){
+    return {
+      filterPlaylist: '',
+      filterTrack: ''
+    }
+  },
+  getTracks: function(filterPlaylist){
+
+    var PLAYLISTS = [
+      { "name": "Playlist1", "tracks": [
+        { "name": "name1", "duration": null, "producer": null, genres: null },
+        { "name": "name2", "duration": "ve2", "producer": null, genres: null },
+        { "name": "name3", "duration": "ve3", "producer": null, genres: null }
+      ] },
+      { "name": "Playlist2", "tracks": [
+        { "name": "name1", "duration": null, "producer": null, genres: null },
+        { "name": "name4", "duration": "ve4", "producer": null, genres: null },
+        { "name": "name5", "duration": "ve5", "producer": null, genres: null },
+        { "name": "name2", "duration": "ve2", "producer": null, genres: null }
+      ] }
+    ];
+
+    var tracks = [];
+    PLAYLISTS.forEach(function(playlist){
+      if (filterPlaylist == playlist.name){
+        tracks = playlist.tracks;
+        return;
+      }
+    }.bind(this));
+
+    return tracks;
+  },
+  handleUserInput: function(filterPlaylist, filterTrack){
+
+    var tracksArr = this.getTracks(filterPlaylist);
+
+    this.setState({
+      filterPlaylist: filterPlaylist,
+      filterTrack: filterTrack,
+      tracks: tracksArr
+    });
+  },
+  componentDidMount: function() {
+
+    var tracksArr = this.getTracks(this.state.filterPlaylist);
+    this.setState({
+      tracks: tracksArr
+    });
+  },
+  render: function(){
+    return (
+      <div className="filterableTrackTable">
+        <FilterForm 
+          filterPlaylist={this.state.filterPlaylist}
+          filterTrack={this.state.filterTrack}
+          playlists={this.props.playlists}
+          onUserInput={this.handleUserInput} />
+        <TrackTable
+          filterPlaylist={this.state.filterPlaylist}
+          filterTrack={this.state.filterTrack}
+          rowsInPage={this.props.rowsInPage}
+          tracks={this.state.tracks} />
+      </div>
+    );
+  }
+});
+
 
 var PLAYLISTS = [
   { "name": "Playlist1"},
