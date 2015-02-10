@@ -88,7 +88,7 @@ var NavigationWheel = React.createClass({displayName: "NavigationWheel",
   getInitialProps: function(){
     return {
       rowsCount: 0,
-      rowsInPage: 10,
+      rowsOnPage: 10,
       page: 1
     };
   },
@@ -103,7 +103,7 @@ var NavigationWheel = React.createClass({displayName: "NavigationWheel",
   },
   render: function(){
     var navClass = this.props.rowsCount === 0 ? "sr-only" : "";
-    var maxPage = Math.round(this.props.rowsCount/this.props.rowsInPage);
+    var maxPage = Math.ceil(this.props.rowsCount/this.props.rowsOnPage);
     if (maxPage === 0){
       maxPage = 1;
     }
@@ -171,7 +171,8 @@ var FilterForm = React.createClass({displayName: "FilterForm",
   handleChange: function(){
     this.props.onUserInput(
       this.refs.filterPlaylist.getDOMNode().value,
-      this.refs.filterTrack.getDOMNode().value
+      this.refs.filterTrack.getDOMNode().value,
+      this.refs.rowsOnPage.getDOMNode().value
     );
   },
   render: function(){
@@ -204,6 +205,19 @@ var FilterForm = React.createClass({displayName: "FilterForm",
             value: this.props.filterTrack, 
             id: "filterTrack", 
             ref: "filterTrack", 
+            onChange: this.handleChange})
+        ), 
+        React.createElement("div", {className: "form-group"}, 
+          React.createElement("label", {className: "control-label", for: "rowsOnPage"}, "Rows On Page"), 
+          React.createElement("input", {
+            className: "form-control", 
+            type: "number", 
+            min: this.props.minRowsOnPage, 
+            max: this.props.maxRowsOnPage, 
+            placeholder: "Enter rows' count...", 
+            value: this.props.rowsOnPage, 
+            id: "rowsOnPage", 
+            ref: "rowsOnPage", 
             onChange: this.handleChange})
         )
       )
@@ -266,8 +280,8 @@ var TrackTable = React.createClass({displayName: "TrackTable",
     return rows;
   },
   filterByPage: function(rows){
-    var rowsInPageInt = Number.parseInt(this.props.rowsInPage);
-    var minRow = (this.state.page - 1) * rowsInPageInt;
+    var rowsOnPageInt = Number.parseInt(this.props.rowsOnPage);
+    var minRow = (this.state.page - 1) * rowsOnPageInt;
     if (minRow < 0){
       minRow = 0;
     }
@@ -276,7 +290,7 @@ var TrackTable = React.createClass({displayName: "TrackTable",
       minRow = 0;
     }
     var start = minRow;
-    var finish = (minRow + rowsInPageInt);
+    var finish = (minRow + rowsOnPageInt);
     if (finish > rows.length){
       finish = rows.length;
     }
@@ -285,7 +299,7 @@ var TrackTable = React.createClass({displayName: "TrackTable",
   render: function(){
     var filteredRows = this.getFilteredRows();
     var orderedRows = this.orderRows(filteredRows);
-    var rows = this.filterByPage(filteredRows);
+    var rows = this.filterByPage(orderedRows);
     var rowsCount = filteredRows.length;
     
     if (rows.length){
@@ -304,7 +318,7 @@ var TrackTable = React.createClass({displayName: "TrackTable",
           React.createElement("tbody", null, rows)
         ), 
         React.createElement(NavigationWheel, {
-          rowsInPage: this.props.rowsInPage, 
+          rowsOnPage: this.props.rowsOnPage, 
           rowsCount: rowsCount, 
           onChangePage: this.handleChangePage, 
           page: this.state.page})
@@ -317,7 +331,8 @@ var FilterableTrackTable = React.createClass({displayName: "FilterableTrackTable
   getInitialState: function(){
     return {
       filterPlaylist: '',
-      filterTrack: ''
+      filterTrack: '',
+      rowsOnPage: 10
     }
   },
   getTracks: function(filterPlaylist){
@@ -346,13 +361,24 @@ var FilterableTrackTable = React.createClass({displayName: "FilterableTrackTable
 
     return tracks;
   },
-  handleUserInput: function(filterPlaylist, filterTrack){
+  minRowsOnPage: 1,
+  maxRowsOnPage: 300,
+  handleUserInput: function(filterPlaylist, filterTrack, rowsOnPage){
 
     var tracksArr = this.getTracks(filterPlaylist);
+
+    var rowsOnPageInt = Number.parseInt(rowsOnPage);
+    if (isNaN(rowsOnPageInt) || rowsOnPageInt < this.minRowsOnPage){
+      rowsOnPageInt = this.minRowsOnPage;
+    }
+    if (rowsOnPageInt > this.maxRowsOnPage){
+      rowsOnPageInt = this.maxRowsOnPage;
+    }
 
     this.setState({
       filterPlaylist: filterPlaylist,
       filterTrack: filterTrack,
+      rowsOnPage: rowsOnPageInt,
       tracks: tracksArr
     });
   },
@@ -370,11 +396,14 @@ var FilterableTrackTable = React.createClass({displayName: "FilterableTrackTable
           filterPlaylist: this.state.filterPlaylist, 
           filterTrack: this.state.filterTrack, 
           playlists: this.props.playlists, 
+          rowsOnPage: this.state.rowsOnPage, 
+          minRowsOnPage: this.minRowsOnPage, 
+          maxRowsOnPage: this.maxRowsOnPage, 
           onUserInput: this.handleUserInput}), 
         React.createElement(TrackTable, {
           filterPlaylist: this.state.filterPlaylist, 
           filterTrack: this.state.filterTrack, 
-          rowsInPage: this.props.rowsInPage, 
+          rowsOnPage: this.state.rowsOnPage, 
           tracks: this.state.tracks})
       )
     );
@@ -389,7 +418,6 @@ var PLAYLISTS = [
 
 React.render(
   React.createElement(FilterableTrackTable, {
-    playlists: PLAYLISTS, 
-    rowsInPage: "1"}),
+    playlists: PLAYLISTS}),
   document.getElementById('content')
 );

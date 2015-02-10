@@ -16,11 +16,10 @@ describe("selected playlist", function() {
 
   var filterableTrackTable = TestUtils.renderIntoDocument(
     React.createElement(FilterableTrackTable, {
-      playlists: PLAYLISTS, 
-      rowsInPage: "1"})
+      playlists: PLAYLISTS})
   );
 
-  it("table empty after initialization", function() {
+  it("is table empty after initialization", function() {
     var classNameToBeHide = 'sr-only';
     var playlist = TestUtils.findRenderedDOMComponentWithTag(
       filterableTrackTable, 'select');
@@ -37,22 +36,54 @@ describe("selected playlist", function() {
     expect(nav.props.className).toEqual(classNameToBeHide);
   });
 
-  it("list 'playlist' has options", function() {
+  it("has list 'playlist' got options", function() {
     var playlist = TestUtils.findRenderedDOMComponentWithTag(
       filterableTrackTable, 'select');
     expect(playlist.getDOMNode().options.length).toBeGreaterThan(1);
   });
 
-  it("select second option - then table is not empty", function() {
-    var classNameToBeHide = 'sr-only',
-      rowsInPlaylistTable = 2,
-      opacityElemHidden = '',
-      hrefPrevNextAnd4Elem = 6;
-
+  it("does decreasing from 4 to 1 work correctly", function() {
     var playlist = TestUtils.findRenderedDOMComponentWithTag(
       filterableTrackTable, 'select');
     playlist.getDOMNode().value = 'Playlist2';
     TestUtils.Simulate.change(playlist);
+
+    var inputs = TestUtils.scryRenderedDOMComponentsWithTag(
+      filterableTrackTable, 'input');
+    var nav = TestUtils.findRenderedDOMComponentWithTag(
+      filterableTrackTable, 'nav');
+
+    var rowsOnPageIndex = 1,
+      prev = 1,
+      next = 1;
+    var rowsOnPage = inputs[rowsOnPageIndex];
+
+    rowsOnPage.getDOMNode().value = 4;
+    TestUtils.Simulate.change(rowsOnPage);
+    var hrefArr = TestUtils.scryRenderedDOMComponentsWithTag(nav, 'a');
+    expect(hrefArr.length).toBe(prev + 1 + next);
+
+    rowsOnPage.getDOMNode().value = 3;
+    TestUtils.Simulate.change(rowsOnPage);
+    var hrefArr = TestUtils.scryRenderedDOMComponentsWithTag(nav, 'a');
+    expect(hrefArr.length).toBe(prev + 2 + next);
+
+    rowsOnPage.getDOMNode().value = 2;
+    TestUtils.Simulate.change(rowsOnPage);
+    var hrefArr = TestUtils.scryRenderedDOMComponentsWithTag(nav, 'a');
+    expect(hrefArr.length).toBe(prev + 2 + next);
+
+    rowsOnPage.getDOMNode().value = 1;
+    TestUtils.Simulate.change(rowsOnPage);
+    var hrefArr = TestUtils.scryRenderedDOMComponentsWithTag(nav, 'a');
+    expect(hrefArr.length).toBe(prev + 4 + next);
+  });
+
+  it("does 'filter playlist' work with existing options", function() {
+    var classNameToBeHide = 'sr-only',
+      rowsInPlaylistTable = 2,
+      opacityElemHidden = '',
+      hrefPrevNextAnd4Elem = 6;
 
     var tbody = TestUtils.findRenderedDOMComponentWithTag(
       filterableTrackTable, 'tbody');
@@ -74,12 +105,12 @@ describe("selected playlist", function() {
     expect(activeOrderButtons.length).toBe(1);
   });
 
-  it("filter existing track", function() {
+  it("does sorting and pagination work", function() {
     var orderButtons = TestUtils.scryRenderedDOMComponentsWithTag(
       filterableTrackTable, 'button');
 
-    var descNameButtonNumber = 1;
-    var descNameButton = orderButtons[descNameButtonNumber];
+    var descNameButtonIndex = 1;
+    var descNameButton = orderButtons[descNameButtonIndex];
     TestUtils.Simulate.click(descNameButton);
 
     var nav = TestUtils.findRenderedDOMComponentWithTag(
@@ -87,8 +118,8 @@ describe("selected playlist", function() {
     var hrefArr = TestUtils.scryRenderedDOMComponentsWithTag(
       nav, 'a');
 
-    var page3Number = 3;
-    var page3 = hrefArr[page3Number];
+    var page3Index = 3;
+    var page3 = hrefArr[page3Index];
     TestUtils.Simulate.click(page3);
 
     var row = TestUtils.findRenderedComponentWithType(
@@ -96,13 +127,16 @@ describe("selected playlist", function() {
     expect(row.props.track.name).toBe('name4');
   });
 
-  it("filter existing track", function() {
+  it("does 'filter track' work with existing track", function() {
     var classNameToBeHide = 'sr-only',
       countRowsAfterFilter = 2,
       hrefPrevNextAnd1Elem = 3;
 
-    var filterTrack = TestUtils.findRenderedDOMComponentWithTag(
+    var inputs = TestUtils.scryRenderedDOMComponentsWithTag(
       filterableTrackTable, 'input');
+
+    var filterTrackIndex = 0;
+    var filterTrack = inputs[filterTrackIndex]; 
     filterTrack.getDOMNode().value = 'name2';
     TestUtils.Simulate.change(filterTrack);
 
@@ -118,11 +152,14 @@ describe("selected playlist", function() {
     expect(hrefArr.length).toEqual(hrefPrevNextAnd1Elem);
   });
 
-  it("filter not existing track", function() {
+  it("does 'filter track' work with not existing track", function() {
     var classNameToBeHide = 'sr-only', countRowsAfterFilter = 0;
 
-    var filterTrack = TestUtils.findRenderedDOMComponentWithTag(
+    var inputs = TestUtils.scryRenderedDOMComponentsWithTag(
       filterableTrackTable, 'input');
+
+    var filterTrackIndex = 0;
+    var filterTrack = inputs[filterTrackIndex]; 
     filterTrack.getDOMNode().value = 'name0';
     TestUtils.Simulate.change(filterTrack);
 
@@ -136,13 +173,16 @@ describe("selected playlist", function() {
     expect(nav.props.className).toEqual(classNameToBeHide);
   });
 
-  it("cleanup filter", function() {
+  it("does 'cleanup filter track' work", function() {
     var classNameToBeHide = 'sr-only',
       countRowsAfterFilter = 2,
       hrefPrevNextAnd4Elem = 6;
 
-    var filterTrack = TestUtils.findRenderedDOMComponentWithTag(
+    var inputs = TestUtils.scryRenderedDOMComponentsWithTag(
       filterableTrackTable, 'input');
+
+    var filterTrackIndex = 0;
+    var filterTrack = inputs[filterTrackIndex]; 
     filterTrack.getDOMNode().value = '';
     TestUtils.Simulate.change(filterTrack);
 
