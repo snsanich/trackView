@@ -104,7 +104,6 @@ describe("selected playlist", function() {
   it("does 'filter playlist' work with existing options", function() {
     var classNameToBeHide = 'sr-only',
       rowsInPlaylistTable = 2,
-      opacityElemHidden = '',
       hrefPrevNextAnd4Elem = 6;
 
     var tbody = TestUtils.findRenderedDOMComponentWithTag(
@@ -150,8 +149,7 @@ describe("selected playlist", function() {
   });
 
   it("does 'filter track' work with existing track", function() {
-    var classNameToBeHide = 'sr-only',
-      countRowsAfterFilter = 2,
+    var countRowsAfterFilter = 2,
       hrefPrevNextAnd1Elem = 3;
 
     var inputs = TestUtils.scryRenderedDOMComponentsWithTag(

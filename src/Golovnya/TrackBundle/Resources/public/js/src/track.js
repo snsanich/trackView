@@ -35,7 +35,6 @@ var TrackOrder = React.createClass({
     this.props.onChangeOrder(
       orderPattern
     );
-    return;
   },
   render: function(){
     var columns = [];
@@ -277,7 +276,7 @@ var TrackTable = React.createClass({
         return -1 * orderDest;
       }
       if (a.props.track[orderName] > b.props.track[orderName]){
-        return 1 * orderDest;
+        return orderDest;
       }
       return 0;
     });
@@ -352,7 +351,7 @@ var FilterableTrackTable = React.createClass({
     $.ajax({
       url: this.props.playlistUrl,
       dataType: 'json',
-      success: function(data, textStatus, jqXHR) {
+      success: function(data) {
         this.getTracks(this.state.playlist.id, {playlists: data.playlists});
       }.bind(this),
       error: function(xhr, status, err) {
@@ -370,7 +369,7 @@ var FilterableTrackTable = React.createClass({
     $.ajax({
       url: url,
       dataType: 'json',
-      success: function(data, textStatus, jqXHR) {
+      success: function(data) {
         nextState['tracks'] = data.tracks;
         this.setState(nextState);
       }.bind(this),
