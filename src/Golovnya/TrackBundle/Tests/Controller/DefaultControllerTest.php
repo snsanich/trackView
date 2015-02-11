@@ -6,12 +6,34 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class DefaultControllerTest extends WebTestCase
 {
-    public function testIndex()
+
+    protected function getJsonContent($method, $uri)
     {
         $client = static::createClient();
 
-        $crawler = $client->request('GET', '/hello/Fabien');
+        $crawler = $client->request($method, $uri);
+        $jsonString = $client->getResponse()->getContent();
+        return json_decode($jsonString);
+    }
 
-        $this->assertTrue($crawler->filter('html:contains("Hello Fabien")')->count() > 0);
+    public function testPlaylist()
+    {
+        $json = $this->getJsonContent('GET', '/playlist');
+        $this->assertObjectHasAttribute('playlists', $json);
+        $this->assertNotEmpty($json->playlists);
+    }
+
+    public function testTrackByPlaylist()
+    {
+        $json = $this->getJsonContent('GET', '/trackByPlaylist/54d9cf9a46115f5f677a5b8f');
+        $this->assertObjectHasAttribute('tracks', $json);
+        $this->assertNotEmpty($json->tracks);
+    }
+
+    public function testTrackByPlaylistEmpty()
+    {
+        $json = $this->getJsonContent('GET', '/trackByPlaylist');
+        $this->assertObjectHasAttribute('tracks', $json);
+        $this->assertEmpty($json->tracks);
     }
 }
