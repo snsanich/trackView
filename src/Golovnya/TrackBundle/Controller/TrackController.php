@@ -15,7 +15,7 @@ class TrackController extends Controller
 {
 
     /**
-     * @Route("/trackByPlaylist/{id}")
+     * @Route("/trackByPlaylist/{id}", defaults={"id" = ""})
      * @Template()
      */
     public function trackAction($id)
@@ -25,7 +25,9 @@ class TrackController extends Controller
             ->findOneById($id);
 
         if (!$playlist){
-            return new JsonResponse(array('message' => 'No product found for name '.$id), 404);
+            $response = new Response(json_encode(array('tracks' => [])));
+            $response->headers->set('Content-Type', 'application/json');
+            return $response;
         }
 
         $trackIds = array_map(function($track){
@@ -76,5 +78,51 @@ class TrackController extends Controller
         $response->headers->set('Content-Type', 'application/json');
         return $response;
     }
-}
 
+    /**
+     * @Route("/testTrackByPlaylist/{id}", defaults={"id" = ""})
+     * @Template()
+     *
+    public function testTrackAction($id)
+    {
+        $playlists = [
+          1 => [
+            [ "name" => "name1", "duration" => null, "producer" => null, "genres" => null ],
+            [ "name" => "name2", "duration" => "ve2", "producer" => null, "genres" => null ],
+            [ "name" => "name3", "duration" => "ve3", "producer" => null, "genres" => null ]
+          ],
+          2 => [
+            [ "name" => "name1", "duration" => null, "producer" => null, "genres" => null ],
+            [ "name" => "name4", "duration" => "ve4", "producer" => null, "genres" => null ],
+            [ "name" => "name5", "duration" => "ve5", "producer" => null, "genres" => null ],
+            [ "name" => "name2", "duration" => "ve2", "producer" => null, "genres" => null ]
+          ]
+        ];
+
+        $mappedTracks = [];
+        if (isset($playlists[$id])){
+            $mappedTracks = $playlists[$id];
+        }
+
+        $response = new Response(json_encode(array('tracks' => $mappedTracks)));
+        $response->headers->set('Content-Type', 'application/json');
+        return $response;
+    }
+
+    **
+     * @Route("/testPlaylist")
+     * @Template()
+     *
+    public function testPlaylistAction()
+    {
+        $mappedPlaylists = [
+          [ "id" => 1, "name" => "Playlist1"],
+          [ "id" => 2, "name" => "Playlist2"]
+        ];
+
+        $response = new Response(json_encode(array('playlists' => $mappedPlaylists)));
+        $response->headers->set('Content-Type', 'application/json');
+        return $response;
+    }
+*/
+}

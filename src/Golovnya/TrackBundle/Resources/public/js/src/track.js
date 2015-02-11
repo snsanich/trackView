@@ -1,7 +1,7 @@
-var PlayListRow = React.createClass({
+var PlaylistRow = React.createClass({
   render: function(){
     return (
-      <tr><th colspan="4">{this.props.name}</th></tr>
+      <tr><th colSpan="4">{this.props.name}</th></tr>
     );
   }
 });
@@ -29,13 +29,13 @@ var TrackOrder = React.createClass({
   handleOrder: function(e){
     var orderPattern = e.currentTarget.getAttribute('data-order-pattern');
     if (!orderPattern || orderPattern === null){
-      return true;
+      return;
     }
     e.preventDefault();
     this.props.onChangeOrder(
       orderPattern
     );
-    return false;
+    return;
   },
   render: function(){
     var columns = [];
@@ -51,6 +51,7 @@ var TrackOrder = React.createClass({
       }
       buttons.push(
         <button
+          key={orderPattern}
           type="button"
           className={buttonClassName}
           data-order-pattern={orderPattern}
@@ -64,6 +65,7 @@ var TrackOrder = React.createClass({
       }
       buttons.push(
         <button
+          key={orderPattern}
           type="button"
           className={buttonClassName}
           data-order-pattern={orderPattern}
@@ -72,8 +74,11 @@ var TrackOrder = React.createClass({
       );
 
       columns.push(
-        <th><span>{field.descr} </span>
-          <div className="columnOrderButtons">{buttons}</div>
+        <th key={fieldname}>
+          <div className="columnOrderButtons">
+            <span>{field.descr} </span>
+            {buttons}
+          </div>
         </th>
       );
     }.bind(this));
@@ -99,7 +104,6 @@ var NavigationWheel = React.createClass({
     this.props.onChangePage(
       pageInt
     );
-    return false;
   },
   render: function(){
     var navClass = this.props.rowsCount === 0 ? "sr-only" : "";
@@ -113,7 +117,7 @@ var NavigationWheel = React.createClass({
 
     className = this.props.page == 1 ? "disabled" : "";
     var navPrev = (
-      <li className={className}>
+      <li key="prev" className={className}>
         <a href="#" aria-label="Previous" onClick={this.handlePage} data-page-number="1">
           <span aria-hidden="true">&laquo;</span>
         </a>
@@ -122,7 +126,7 @@ var NavigationWheel = React.createClass({
 
     className = this.props.page == maxPage ? "disabled" : "";
     var navNext = (
-      <li className={className}>
+      <li key="next" className={className}>
         <a href="#" aria-label="Next" onClick={this.handlePage} data-page-number={maxPage}>
           <span aria-hidden="true">&raquo;</span>
         </a>
@@ -139,7 +143,7 @@ var NavigationWheel = React.createClass({
       pageAriaName = "page" + i;
       if (i == this.props.page){
         navItem = (
-          <li className="active">
+          <li key={i} className="active">
             <a href="#" aria-label={pageAriaName} onClick={this.handlePage} data-page-number={i}>
               <span> {i} </span><span className="sr-only">(current)</span>
             </a>
@@ -147,7 +151,7 @@ var NavigationWheel = React.createClass({
         );
       } else {
         navItem = (
-          <li>
+          <li key={i}>
             <a href="#" aria-label={pageAriaName} onClick={this.handlePage} data-page-number={i}>{i}</a>
           </li>
         );
@@ -178,26 +182,26 @@ var FilterForm = React.createClass({
   render: function(){
 
     var options = [];
-    options.push(<option value="">Choose Playlist</option>);
+    options.push(<option key={0} value="">Choose Playlist</option>);
 
     this.props.playlists.forEach(function(playlist){
-      options.push(<option value={playlist.name}>{playlist.name}</option>);
+      options.push(<option key={playlist.id} value={playlist.id}>{playlist.name}</option>);
     }.bind(this));
 
     return (
       <form>
         <div className="form-group">
-          <label className="control-label" for="filterPlaylist">Filter Playlist</label>
+          <label className="control-label" htmlFor="filterPlaylist">Filter Playlist</label>
           <select
             className="form-control"
             type="text"
-            value={this.props.filterPlaylist}
+            value={this.props.playlistId}
             id="filterPlaylist"
             ref="filterPlaylist"
             onChange={this.handleChange}>{options}</select>
         </div>
         <div className="form-group">
-          <label className="control-label" for="filterTrack">Filter Tracks</label>
+          <label className="control-label" htmlFor="filterTrack">Filter Tracks</label>
           <input
             className="form-control"
             type="text"
@@ -208,7 +212,7 @@ var FilterForm = React.createClass({
             onChange={this.handleChange} />
         </div>
         <div className="form-group">
-          <label className="control-label" for="rowsOnPage">Rows On Page</label>
+          <label className="control-label" htmlFor="rowsOnPage">Rows On Page</label>
           <input
             className="form-control"
             type="number"
@@ -257,7 +261,7 @@ var TrackTable = React.createClass({
     if (this.props.tracks && this.props.tracks.length > 0) {
       this.props.tracks.forEach(function(track){
         if (track.name.indexOf(this.props.filterTrack) !== -1){
-          rows.push(<TrackRow track={track} />);
+          rows.push(<TrackRow key={track.id} track={track} />);
         }
       }.bind(this));
     }
@@ -303,7 +307,7 @@ var TrackTable = React.createClass({
     var rowsCount = filteredRows.length;
     
     if (rows.length){
-      rows.splice(0, 0, <PlayListRow name={this.props.filterPlaylist} />);
+      rows.splice(0, 0, <PlaylistRow key={this.props.playlist.id} name={this.props.playlist.name} />);
     }
 
     return (
@@ -330,42 +334,54 @@ var TrackTable = React.createClass({
 var FilterableTrackTable = React.createClass({
   getInitialState: function(){
     return {
-      filterPlaylist: '',
+      playlist: { id: 0, name: '' },
       filterTrack: '',
-      rowsOnPage: 10
+      rowsOnPage: 10,
+      playlists: [],
+      tracks: []
     }
   },
-  getTracks: function(filterPlaylist){
+  getInitialProps: function(){
+    return {
+      playlistUrl: '',
+      trackByPlaylistUrl: ''
+    };
+  },
+  componentDidMount: function(){
 
-    var PLAYLISTS = [
-      { "name": "Playlist1", "tracks": [
-        { "name": "name1", "duration": null, "producer": null, genres: null },
-        { "name": "name2", "duration": "ve2", "producer": null, genres: null },
-        { "name": "name3", "duration": "ve3", "producer": null, genres: null }
-      ] },
-      { "name": "Playlist2", "tracks": [
-        { "name": "name1", "duration": null, "producer": null, genres: null },
-        { "name": "name4", "duration": "ve4", "producer": null, genres: null },
-        { "name": "name5", "duration": "ve5", "producer": null, genres: null },
-        { "name": "name2", "duration": "ve2", "producer": null, genres: null }
-      ] }
-    ];
+    $.ajax({
+      url: this.props.playlistUrl,
+      dataType: 'json',
+      success: function(data, textStatus, jqXHR) {
+        this.getTracks(this.state.playlist.id, {playlists: data.playlists});
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.error(this.props.playlistUrl, status, err.toString());
+      }.bind(this)
+    }); 
+  },
+  getTracks: function(playlistId, nextState){
 
-    var tracks = [];
-    PLAYLISTS.forEach(function(playlist){
-      if (filterPlaylist == playlist.name){
-        tracks = playlist.tracks;
-        return;
-      }
-    }.bind(this));
+    var url = this.props.trackByPlaylistUrl;
+    if (playlistId != "0"){
+      url = url + '/' + playlistId;
+    }
 
-    return tracks;
+    $.ajax({
+      url: url,
+      dataType: 'json',
+      success: function(data, textStatus, jqXHR) {
+        nextState['tracks'] = data.tracks;
+        this.setState(nextState);
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.error(url, status, err.toString());
+      }.bind(this)
+    }); 
   },
   minRowsOnPage: 1,
   maxRowsOnPage: 300,
-  handleUserInput: function(filterPlaylist, filterTrack, rowsOnPage){
-
-    var tracksArr = this.getTracks(filterPlaylist);
+  handleUserInput: function(playlistId, filterTrack, rowsOnPage){
 
     var rowsOnPageInt = Number.parseInt(rowsOnPage);
     if (isNaN(rowsOnPageInt) || rowsOnPageInt < this.minRowsOnPage){
@@ -375,33 +391,34 @@ var FilterableTrackTable = React.createClass({
       rowsOnPageInt = this.maxRowsOnPage;
     }
 
-    this.setState({
-      filterPlaylist: filterPlaylist,
-      filterTrack: filterTrack,
-      rowsOnPage: rowsOnPageInt,
-      tracks: tracksArr
+    var selectedPlaylist = { id: 0, name: '' };
+    this.state.playlists.forEach(function(playlist){
+      if (playlist.id == playlistId){
+        selectedPlaylist = playlist;
+      }
     });
-  },
-  componentDidMount: function() {
 
-    var tracksArr = this.getTracks(this.state.filterPlaylist);
-    this.setState({
-      tracks: tracksArr
-    });
+    var nextState = {
+      playlist: selectedPlaylist,
+      filterTrack: filterTrack,
+      rowsOnPage: rowsOnPageInt
+    };
+
+    this.getTracks(selectedPlaylist.id, nextState);
   },
   render: function(){
     return (
       <div className="filterableTrackTable">
         <FilterForm 
-          filterPlaylist={this.state.filterPlaylist}
+          playlistId={this.state.playlist.id}
           filterTrack={this.state.filterTrack}
-          playlists={this.props.playlists}
           rowsOnPage={this.state.rowsOnPage}
           minRowsOnPage={this.minRowsOnPage}
           maxRowsOnPage={this.maxRowsOnPage}
+          playlists={this.state.playlists}
           onUserInput={this.handleUserInput} />
         <TrackTable
-          filterPlaylist={this.state.filterPlaylist}
+          playlist={this.state.playlist}
           filterTrack={this.state.filterTrack}
           rowsOnPage={this.state.rowsOnPage}
           tracks={this.state.tracks} />
@@ -410,14 +427,9 @@ var FilterableTrackTable = React.createClass({
   }
 });
 
-
-var PLAYLISTS = [
-  { "name": "Playlist1"},
-  { "name": "Playlist2"}
-];
-
 React.render(
   <FilterableTrackTable
-    playlists={PLAYLISTS} />,
+      playlistUrl="app_dev.php/playlist"
+      trackByPlaylistUrl="app_dev.php/trackByPlaylist" />,
   document.getElementById('content')
 );

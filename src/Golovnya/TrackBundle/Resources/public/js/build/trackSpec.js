@@ -4,20 +4,42 @@
  * React and FilterableTable available
  */
 var TestUtils = null;
+var filterableTrackTable = null;
 
 describe("selected playlist", function() {
 
-  TestUtils = React.addons.TestUtils;
+  it("open mock ajax", function() {
+    jasmine.Ajax.install();
+    jasmine.Ajax.stubRequest("app_dev.php/testPlaylist").andReturn({
+      responseText: '{"playlists":[{"id":1,"name":"Playlist1"},{"id":2,"name":"Playlist2"}]}',
+      status: 200,
+      contentType: 'application/json'
+    });
+    jasmine.Ajax.stubRequest("app_dev.php/testTrackByPlaylist").andReturn({
+      responseText: '{"tracks":[]}',
+      status: 200,
+      contentType: 'application/json'
+    });
+    jasmine.Ajax.stubRequest("app_dev.php/testTrackByPlaylist/1").andReturn({
+      responseText: '{"tracks":[{"id":"1", "name":"name1","duration":null,"producer":null,"genres":null},{"id":"2", "name":"name2","duration":"ve2","producer":null,"genres":null},{"id":"3", "name":"name3","duration":"ve3","producer":null,"genres":null}]}',
+      status: 200,
+      contentType: 'application/json'
+    });
+    jasmine.Ajax.stubRequest("app_dev.php/testTrackByPlaylist/2").andReturn({
+      responseText: '{"tracks":[{"id":"4", "name":"name1","duration":null,"producer":null,"genres":null},{"id":"5", "name":"name4","duration":"ve4","producer":null,"genres":null},{"id":"6", "name":"name5","duration":"ve5","producer":null,"genres":null},{"id":"7", "name":"name2","duration":"ve2","producer":null,"genres":null}]}',
+      status: 200,
+      contentType: 'application/json'
+    });
 
-  var PLAYLISTS = [
-    { "name": "Playlist1"},
-    { "name": "Playlist2"}
-  ];
+    TestUtils = React.addons.TestUtils;
+    filterableTrackTable = TestUtils.renderIntoDocument(
+      React.createElement(FilterableTrackTable, {
+        playlistUrl: "app_dev.php/testPlaylist", 
+        trackByPlaylistUrl: "app_dev.php/testTrackByPlaylist"})
+    );
 
-  var filterableTrackTable = TestUtils.renderIntoDocument(
-    React.createElement(FilterableTrackTable, {
-      playlists: PLAYLISTS})
-  );
+    expect(true).toBe(true);
+  });
 
   it("is table empty after initialization", function() {
     var classNameToBeHide = 'sr-only';
@@ -45,7 +67,7 @@ describe("selected playlist", function() {
   it("does decreasing from 4 to 1 work correctly", function() {
     var playlist = TestUtils.findRenderedDOMComponentWithTag(
       filterableTrackTable, 'select');
-    playlist.getDOMNode().value = 'Playlist2';
+    playlist.getDOMNode().value = '2';
     TestUtils.Simulate.change(playlist);
 
     var inputs = TestUtils.scryRenderedDOMComponentsWithTag(
@@ -198,5 +220,10 @@ describe("selected playlist", function() {
     var hrefArr = TestUtils.scryRenderedDOMComponentsWithTag(
       nav, 'a');
     expect(hrefArr.length).toEqual(hrefPrevNextAnd4Elem);
+  });
+
+  it("close mock ajax", function() {
+    jasmine.Ajax.uninstall();
+    expect(true).toBe(true);
   });
 }); 

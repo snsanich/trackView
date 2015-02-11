@@ -23,6 +23,7 @@
     "react": "*",
     "html5shiv": "*",
     "respond": "~1.4.2",
-    "jasmine": "*"
+    "jasmine": "*",
+    "jasmine-ajax": "*"
   }
 }

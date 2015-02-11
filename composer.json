@@ -1,11 +1,15 @@
 {
-    "name": "symfony/framework-standard-edition",
-    "license": "MIT",
+    "name": "golovnya/trackview",
     "type": "project",
-    "description": "The \"Symfony Standard Edition\" distribution",
-    "autoload": {
-        "psr-0": { "": "src/" }
-    },
+    "description": "Track View for Educational Purpose",
+    "keywords": ["education"],
+    "license": "MIT",
+    "authors": [
+        {
+             "name": "Golovnya Alexander",
+             "email": "snsanich@gmail.com"
+        }
+    ],
     "require": {
         "php": ">=5.3.3",
         "symfony/symfony": "2.3.*",
@@ -23,6 +27,10 @@
         "doctrine/mongodb-odm": "1.0.*@dev",
         "doctrine/mongodb-odm-bundle": "3.0.*@dev"
     },
+    "autoload": {
+        "psr-0": { "": "src/" }
+    },
+    "minimum-stability": "stable",
     "scripts": {
         "post-install-cmd": [
             "Incenteev\\ParameterHandler\\ScriptHandler::buildParameters",
@@ -42,7 +50,6 @@
     "config": {
         "bin-dir": "bin"
     },
-    "minimum-stability": "stable",
     "extra": {
         "symfony-app-dir": "app",
         "symfony-web-dir": "web",

@@ -78,6 +78,7 @@ ul {
   background-color: #fff;
 }
 
-.trackTable .columnOrderButtons {
+.columnOrderButtons > span,
+.columnOrderButtons > .btn {
   display: inline-block;
 }
