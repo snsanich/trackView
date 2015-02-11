@@ -1,22 +1,16 @@
-Symfony Standard Edition
-========================
+View preloaded tracks
+=====================
 
-Welcome to the Symfony Standard Edition - a fully-functional Symfony2
-application that you can use as the skeleton for your new applications.
-
-For details on how to download and get started with Symfony, see the
-[Installation][1] chapter of the Symfony Documentation.
+Welcome to the Track View - project for education
 
 What's inside?
 --------------
 
-The Symfony Standard Edition is configured with the following defaults:
-
-  * An AppBundle you can use to start coding;
+  * An GolovnyaBundle with Track Service
 
   * Twig as the only configured template engine;
 
-  * Doctrine ORM/DBAL;
+  * Doctrine MongoDB-ORM
 
   * Swiftmailer;
 
@@ -53,12 +47,11 @@ It comes pre-configured with the following bundles:
   * [**SensioGeneratorBundle**][13] (in dev/test env) - Adds code generation
     capabilities
 
+  * [**DoctrineMongoDBBundle**][14] - Adds support for the Doctrine ORM + MongoDB
+
 All libraries and bundles included in the Symfony Standard Edition are
 released under the MIT or BSD license.
 
-Enjoy!
-
-[1]:  http://symfony.com/doc/2.3/book/installation.html
 [6]:  http://symfony.com/doc/2.3/bundles/SensioFrameworkExtraBundle/index.html
 [7]:  http://symfony.com/doc/2.3/book/doctrine.html
 [8]:  http://symfony.com/doc/2.3/book/templating.html
@@ -67,3 +60,4 @@ Enjoy!
 [11]: http://symfony.com/doc/2.3/cookbook/logging/monolog.html
 [12]: http://symfony.com/doc/2.3/cookbook/assetic/asset_management.html
 [13]: http://symfony.com/doc/2.3/bundles/SensioGeneratorBundle/index.html
+[14]: http://symfony.com/doc/3.0/bundles/DoctrineMongoDBBundle/index.html
