@@ -7,10 +7,10 @@ env:
         - components=no
 before_script:
     - travis_retry sudo apt-get install parallel
-    - composer self-update
-    - if [ $(php -r "echo PHP_MINOR_VERSION;") -le 4 ]; then echo "extension = mongo.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini; fi;
 
 install:
+    - if [ $(php -r "echo PHP_MINOR_VERSION;") -le 4 ]; then echo "extension = mongo.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini; fi;
+    - composer self-update
     - composer install --no-interaction
     - bower install --save
     - mongo trackview --eval "printjson(db.dropDatabase())"
