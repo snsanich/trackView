@@ -428,7 +428,7 @@ var FilterableTrackTable = React.createClass({displayName: "FilterableTrackTable
 
 React.render(
   React.createElement(FilterableTrackTable, {
-      playlistUrl: "app_dev.php/playlist", 
-      trackByPlaylistUrl: "app_dev.php/trackByPlaylist"}),
+      playlistUrl: "playlist", 
+      trackByPlaylistUrl: "trackByPlaylist"}),
   document.getElementById('content')
 );

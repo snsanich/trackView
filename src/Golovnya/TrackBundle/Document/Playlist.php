@@ -23,7 +23,7 @@ class Playlist
     /**
      * @MongoDB\Hash
      */
-    protected $track;
+    protected $tracks;
     public function __construct()
     {
         $this->track = new \Doctrine\Common\Collections\ArrayCollection();
@@ -62,44 +62,24 @@ class Playlist
     }
 
     /**
-     * Add track
+     * Set tracks
      *
-     * @param Golovnya\TrackBundle\Document\Track $track
-     */
-    public function addTrack(\Golovnya\TrackBundle\Document\Track $track)
-    {
-        $this->track[] = $track;
-    }
-
-    /**
-     * Remove track
-     *
-     * @param Golovnya\TrackBundle\Document\Track $track
-     */
-    public function removeTrack(\Golovnya\TrackBundle\Document\Track $track)
-    {
-        $this->track->removeElement($track);
-    }
-
-    /**
-     * Get track
-     *
-     * @return Doctrine\Common\Collections\Collection $track
-     */
-    public function getTrack()
-    {
-        return $this->track;
-    }
-
-    /**
-     * Set track
-     *
-     * @param hash $track
+     * @param hash $tracks
      * @return self
      */
-    public function setTrack($track)
+    public function setTracks($tracks)
     {
-        $this->track = $track;
+        $this->tracks = $tracks;
         return $this;
+    }
+
+    /**
+     * Get tracks
+     *
+     * @return hash $tracks
+     */
+    public function getTracks()
+    {
+        return $this->tracks;
     }
 }

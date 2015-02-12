@@ -44,21 +44,26 @@ assetic:
             output: "js/jasmine.js"
         shiv_respond:
             inputs:
-                - %kernel.root_dir%/../web/js/shiv_respond.js
+                - '@GolovnyaTrackBundle/Resources/public/vendor/html5shiv/dist/html5shiv.js'
+                - '@GolovnyaTrackBundle/Resources/public/vendor/respond/dest/respond.src.js'
             output: 'js/shiv_respond.js'
             filters:
                 - uglifyjs2
  
         common:
             inputs:
-                - %kernel.root_dir%/../web/js/main.js
+                - '@GolovnyaTrackBundle/Resources/public/vendor/react/react-with-addons.js'
+                - '@GolovnyaTrackBundle/Resources/public/vendor/jquery/dist/jquery.js'
+                - '@bootstrap_js'
+                - '@GolovnyaTrackBundle/Resources/public/js/src/track.js'
             output: 'js/main.js'
             filters:
                 - uglifyjs2
  
         main:
             inputs:
-                - %kernel.root_dir%/../web/css/main.css
+                - '@bootstrap_css' 
+                - '@GolovnyaTrackBundle/Resources/public/css/track.css' 
 
             output: 'css/main.css'
             filters:

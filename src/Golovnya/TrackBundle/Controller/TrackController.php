@@ -35,7 +35,7 @@ class TrackController extends Controller
         $trackIds = array_map(function($track){
             $list = (array)$track;
             return $list['$id'];
-        }, $playlist->getTrack());
+        }, $playlist->getTracks());
 
         $qb = $this->get('doctrine_mongodb')
             ->getManager()
