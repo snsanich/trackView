@@ -1,6 +1,8 @@
 View preloaded tracks
 =====================
 
+[![Build Status](https://travis-ci.org/snsanich/trackView.svg)](https://travis-ci.org/snsanich/trackView)
+
 Welcome to the Track View - project for education
 
 What's inside?
@@ -56,11 +58,13 @@ FAQ:
 ---
 
 How make a mongo dump?
-  mongodump --db trackview --out src/Golovnya/TrackBundle/Resources/data/dump
+
+  >mongodump --db trackview --out src/Golovnya/TrackBundle/Resources/data/dump
 
 How start application?
-  php app/console cache:clear --env=prod
-  php app/console assetic:dump --env=prod
+
+  >php app/console cache:clear --env=prod
+  >php app/console assetic:dump --env=prod
 
 [6]:  http://symfony.com/doc/2.3/bundles/SensioFrameworkExtraBundle/index.html
 [7]:  http://symfony.com/doc/2.3/book/doctrine.html
