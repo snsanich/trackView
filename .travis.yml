@@ -1,7 +1,20 @@
 language: php
 php:
   - 5.4
+services: mongodb
+env:
+    global:
+        - components=no
 before_script:
-  - 
+    - travis_retry sudo apt-get install parallel
+    - composer self-update
+    - if [ $(php -r "echo PHP_MINOR_VERSION;") -le 4 ]; then echo "extension = mongo.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini; fi;
+
 install:
-  - composer install  
+    - composer install --no-interaction
+    - bower install --save
+    - mongo trackview --eval "printjson(db.dropDatabase())"
+    - mongorestore src/Golovnya/TrackBundle/Resources/data/dump
+
+script:
+    - ls -d src/Golovnya/*/Tests | parallel --gnu --keep-order 'echo -e "\\nRunning {} tests"; phpunit -c app/ --exclude-group tty,benchmark,intl-data {} || (echo -e "\\e[41mKO\\e[0m {}" && $(exit 1));'
