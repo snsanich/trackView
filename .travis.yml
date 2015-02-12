@@ -12,7 +12,8 @@ install:
     - if [ $(php -r "echo PHP_MINOR_VERSION;") -le 4 ]; then echo "extension = mongo.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini; fi;
     - composer self-update
     - composer install --no-interaction
-    - bower install --save
+    - bower cache-clean
+    - bower install
     - mongo trackview --eval "printjson(db.dropDatabase())"
     - mongorestore src/Golovnya/TrackBundle/Resources/data/dump
 
