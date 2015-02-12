@@ -9,6 +9,7 @@ var filterableTrackTable = null;
 describe("selected playlist", function() {
 
   it("open mock ajax", function() {
+
     jasmine.Ajax.install();
     jasmine.Ajax.stubRequest("app_dev.php/testPlaylist").andReturn({
       responseText: '{"playlists":[{"id":1,"name":"Playlist1"},{"id":2,"name":"Playlist2"}]}',
@@ -33,9 +34,10 @@ describe("selected playlist", function() {
 
     TestUtils = React.addons.TestUtils;
     filterableTrackTable = TestUtils.renderIntoDocument(
-      <FilterableTrackTable
-        playlistUrl="app_dev.php/testPlaylist"
-        trackByPlaylistUrl="app_dev.php/testTrackByPlaylist" />
+      React.createElement(FilterableTrackTable, {
+        playlistUrl: "app_dev.php/testPlaylist",
+        trackByPlaylistUrl: "app_dev.php/testTrackByPlaylist"
+      })
     );
 
     expect(true).toBe(true);

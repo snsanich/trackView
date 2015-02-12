@@ -25,10 +25,22 @@ monolog:
             level: info
 
 assetic:
-    use_controller: true
+    bundles: ['GolovnyaTrackBundle']
+    assets:
+        jasminejs:
+            inputs:
+                - '@GolovnyaTrackBundle/Resources/public/vendor/jasmine/lib/jasmine-core/jasmine.js'
+                - '@GolovnyaTrackBundle/Resources/public/vendor/jasmine/lib/jasmine-core/jasmine-html.js'
+                - '@GolovnyaTrackBundle/Resources/public/vendor/jasmine/lib/jasmine-core/boot.js'
+                - '@GolovnyaTrackBundle/Resources/public/vendor/jasmine/lib/jasmine-core/jasmine-html.js'
+                - '@GolovnyaTrackBundle/Resources/public/vendor/jasmine-ajax/lib/mock-ajax.js'
+                - '@GolovnyaTrackBundle/Resources/public/js/spec/trackSpec.js'
+            output: "js/jasmine.js"
 
+    
 #swiftmailer:
 #    delivery_address: me@example.com
 
 parameters:
     auth_required_channel: 'http'
+    kernel_debug: true

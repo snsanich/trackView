@@ -24,3 +24,42 @@ monolog:
 
 parameters:
     auth_required_channel: 'https'
+    kernel.debug: false
+
+# Assetic Configuration
+assetic:
+    node: /usr/local/bin/node
+    filters:
+        uglifycss:
+            bin: /usr/local/bin/uglifycss
+            apply_to: "\.css$"
+        uglifyjs2:
+            bin: /usr/local/bin/uglifyjs
+            apply_to: "\.js$"
+
+    assets:
+        jasminejs:
+            inputs:
+                - '@GolovnyaTrackBundle/Resources/public/vendor/jasmine/lib/jasmine-core/jasmine.js'
+            output: "js/jasmine.js"
+        shiv_respond:
+            inputs:
+                - %kernel.root_dir%/../web/js/shiv_respond.js
+            output: 'js/shiv_respond.js'
+            filters:
+                - uglifyjs2
+ 
+        common:
+            inputs:
+                - %kernel.root_dir%/../web/js/main.js
+            output: 'js/main.js'
+            filters:
+                - uglifyjs2
+ 
+        main:
+            inputs:
+                - %kernel.root_dir%/../web/css/main.css
+
+            output: 'css/main.css'
+            filters:
+                - uglifycss

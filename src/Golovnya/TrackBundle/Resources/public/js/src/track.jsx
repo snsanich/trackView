@@ -1,25 +1,25 @@
-var PlaylistRow = React.createClass({displayName: "PlaylistRow",
+var PlaylistRow = React.createClass({
   render: function(){
     return (
-      React.createElement("tr", null, React.createElement("th", {colSpan: "4"}, this.props.name))
+      <tr><th colSpan="4">{this.props.name}</th></tr>
     );
   }
 });
 
-var TrackRow = React.createClass({displayName: "TrackRow",
+var TrackRow = React.createClass({
   render: function(){
     return (
-      React.createElement("tr", null, 
-        React.createElement("td", null, this.props.track.name), 
-        React.createElement("td", null, this.props.track.duration), 
-        React.createElement("td", null, this.props.track.producer), 
-        React.createElement("td", null, this.props.track.genres)
-      )
+      <tr>
+        <td>{this.props.track.name}</td>
+        <td>{this.props.track.duration}</td>
+        <td>{this.props.track.producer}</td>
+        <td>{this.props.track.genres}</td>
+      </tr>
     );
   }
 });
 
-var TrackOrder = React.createClass({displayName: "TrackOrder",
+var TrackOrder = React.createClass({
   getInitialProps: function(){
     return {
       fields: {},
@@ -49,12 +49,12 @@ var TrackOrder = React.createClass({displayName: "TrackOrder",
         buttonClassName = "active " + buttonClassName;
       }
       buttons.push(
-        React.createElement("button", {
-          key: orderPattern, 
-          type: "button", 
-          className: buttonClassName, 
-          "data-order-pattern": orderPattern, 
-          onClick: this.handleOrder}, "asc", React.createElement("span", {className: "glyphicon glyphicon-chevron-up", "aria-hidden": "true"}))
+        <button
+          key={orderPattern}
+          type="button"
+          className={buttonClassName}
+          data-order-pattern={orderPattern}
+          onClick={this.handleOrder}>asc<span className="glyphicon glyphicon-chevron-up" aria-hidden="true"></span></button>
       );
 
       buttonClassName = "btn btn-default btn-xs";
@@ -63,32 +63,32 @@ var TrackOrder = React.createClass({displayName: "TrackOrder",
         buttonClassName = "active " + buttonClassName;
       }
       buttons.push(
-        React.createElement("button", {
-          key: orderPattern, 
-          type: "button", 
-          className: buttonClassName, 
-          "data-order-pattern": orderPattern, 
-          onClick: this.handleOrder}, "desc", React.createElement("span", {className: "glyphicon glyphicon-chevron-down", "aria-hidden": "true"})
-        )
+        <button
+          key={orderPattern}
+          type="button"
+          className={buttonClassName}
+          data-order-pattern={orderPattern}
+          onClick={this.handleOrder}>desc<span className="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>
+        </button>
       );
 
       columns.push(
-        React.createElement("th", {key: fieldname}, 
-          React.createElement("div", {className: "columnOrderButtons"}, 
-            React.createElement("span", null, field.descr, " "), 
-            buttons
-          )
-        )
+        <th key={fieldname}>
+          <div className="columnOrderButtons">
+            <span>{field.descr} </span>
+            {buttons}
+          </div>
+        </th>
       );
     }.bind(this));
 
     return (
-      React.createElement("tr", null, columns)
+      <tr>{columns}</tr>
     );
   }
 });
 
-var NavigationWheel = React.createClass({displayName: "NavigationWheel",
+var NavigationWheel = React.createClass({
   getInitialProps: function(){
     return {
       rowsCount: 0,
@@ -116,20 +116,20 @@ var NavigationWheel = React.createClass({displayName: "NavigationWheel",
 
     className = this.props.page == 1 ? "disabled" : "";
     var navPrev = (
-      React.createElement("li", {key: "prev", className: className}, 
-        React.createElement("a", {href: "#", "aria-label": "Previous", onClick: this.handlePage, "data-page-number": "1"}, 
-          React.createElement("span", {"aria-hidden": "true"}, "«")
-        )
-      )
+      <li key="prev" className={className}>
+        <a href="#" aria-label="Previous" onClick={this.handlePage} data-page-number="1">
+          <span aria-hidden="true">&laquo;</span>
+        </a>
+      </li>
     );
 
     className = this.props.page == maxPage ? "disabled" : "";
     var navNext = (
-      React.createElement("li", {key: "next", className: className}, 
-        React.createElement("a", {href: "#", "aria-label": "Next", onClick: this.handlePage, "data-page-number": maxPage}, 
-          React.createElement("span", {"aria-hidden": "true"}, "»")
-        )
-      )
+      <li key="next" className={className}>
+        <a href="#" aria-label="Next" onClick={this.handlePage} data-page-number={maxPage}>
+          <span aria-hidden="true">&raquo;</span>
+        </a>
+      </li>
     );
 
 
@@ -142,35 +142,35 @@ var NavigationWheel = React.createClass({displayName: "NavigationWheel",
       pageAriaName = "page" + i;
       if (i == this.props.page){
         navItem = (
-          React.createElement("li", {key: i, className: "active"}, 
-            React.createElement("a", {href: "#", "aria-label": pageAriaName, onClick: this.handlePage, "data-page-number": i}, 
-              React.createElement("span", null, " ", i, " "), React.createElement("span", {className: "sr-only"}, "(current)")
-            )
-          )
+          <li key={i} className="active">
+            <a href="#" aria-label={pageAriaName} onClick={this.handlePage} data-page-number={i}>
+              <span> {i} </span><span className="sr-only">(current)</span>
+            </a>
+          </li>
         );
       } else {
         navItem = (
-          React.createElement("li", {key: i}, 
-            React.createElement("a", {href: "#", "aria-label": pageAriaName, onClick: this.handlePage, "data-page-number": i}, i)
-          )
+          <li key={i}>
+            <a href="#" aria-label={pageAriaName} onClick={this.handlePage} data-page-number={i}>{i}</a>
+          </li>
         );
       }
 
       navItems.push(navItem);
     }
     return (
-      React.createElement("nav", {className: navClass}, 
-        React.createElement("ul", {className: "pagination"}, 
-          navPrev, 
-          navItems, 
-          navNext
-        )
-      )
+      <nav className={navClass}>
+        <ul className="pagination">
+          {navPrev}
+          {navItems}
+          {navNext}
+        </ul>
+      </nav>
     );
   }
 });
 
-var FilterForm = React.createClass({displayName: "FilterForm",
+var FilterForm = React.createClass({
   handleChange: function(){
     this.props.onUserInput(
       this.refs.filterPlaylist.getDOMNode().value,
@@ -181,54 +181,54 @@ var FilterForm = React.createClass({displayName: "FilterForm",
   render: function(){
 
     var options = [];
-    options.push(React.createElement("option", {key: 0, value: ""}, "Choose Playlist"));
+    options.push(<option key={0} value="">Choose Playlist</option>);
 
     this.props.playlists.forEach(function(playlist){
-      options.push(React.createElement("option", {key: playlist.id, value: playlist.id}, playlist.name));
+      options.push(<option key={playlist.id} value={playlist.id}>{playlist.name}</option>);
     }.bind(this));
 
     return (
-      React.createElement("form", null, 
-        React.createElement("div", {className: "form-group"}, 
-          React.createElement("label", {className: "control-label", htmlFor: "filterPlaylist"}, "Filter Playlist"), 
-          React.createElement("select", {
-            className: "form-control", 
-            type: "text", 
-            value: this.props.playlistId, 
-            id: "filterPlaylist", 
-            ref: "filterPlaylist", 
-            onChange: this.handleChange}, options)
-        ), 
-        React.createElement("div", {className: "form-group"}, 
-          React.createElement("label", {className: "control-label", htmlFor: "filterTrack"}, "Filter Tracks"), 
-          React.createElement("input", {
-            className: "form-control", 
-            type: "text", 
-            placeholder: "Filter track...", 
-            value: this.props.filterTrack, 
-            id: "filterTrack", 
-            ref: "filterTrack", 
-            onChange: this.handleChange})
-        ), 
-        React.createElement("div", {className: "form-group"}, 
-          React.createElement("label", {className: "control-label", htmlFor: "rowsOnPage"}, "Rows On Page"), 
-          React.createElement("input", {
-            className: "form-control", 
-            type: "number", 
-            min: this.props.minRowsOnPage, 
-            max: this.props.maxRowsOnPage, 
-            placeholder: "Enter rows' count...", 
-            value: this.props.rowsOnPage, 
-            id: "rowsOnPage", 
-            ref: "rowsOnPage", 
-            onChange: this.handleChange})
-        )
-      )
+      <form>
+        <div className="form-group">
+          <label className="control-label" htmlFor="filterPlaylist">Filter Playlist</label>
+          <select
+            className="form-control"
+            type="text"
+            value={this.props.playlistId}
+            id="filterPlaylist"
+            ref="filterPlaylist"
+            onChange={this.handleChange}>{options}</select>
+        </div>
+        <div className="form-group">
+          <label className="control-label" htmlFor="filterTrack">Filter Tracks</label>
+          <input
+            className="form-control"
+            type="text"
+            placeholder="Filter track..."
+            value={this.props.filterTrack}
+            id="filterTrack"
+            ref="filterTrack"
+            onChange={this.handleChange} />
+        </div>
+        <div className="form-group">
+          <label className="control-label" htmlFor="rowsOnPage">Rows On Page</label>
+          <input
+            className="form-control"
+            type="number"
+            min={this.props.minRowsOnPage}
+            max={this.props.maxRowsOnPage}
+            placeholder="Enter rows' count..."
+            value={this.props.rowsOnPage}
+            id="rowsOnPage"
+            ref="rowsOnPage"
+            onChange={this.handleChange} />
+        </div>
+      </form>
     );
   }
 });
 
-var TrackTable = React.createClass({displayName: "TrackTable",
+var TrackTable = React.createClass({
   getInitialState: function(){
     return {
       page: 1,
@@ -260,7 +260,7 @@ var TrackTable = React.createClass({displayName: "TrackTable",
     if (this.props.tracks && this.props.tracks.length > 0) {
       this.props.tracks.forEach(function(track){
         if (track.name.indexOf(this.props.filterTrack) !== -1){
-          rows.push(React.createElement(TrackRow, {key: track.id, track: track}));
+          rows.push(<TrackRow key={track.id} track={track} />);
         }
       }.bind(this));
     }
@@ -306,31 +306,31 @@ var TrackTable = React.createClass({displayName: "TrackTable",
     var rowsCount = filteredRows.length;
     
     if (rows.length){
-      rows.splice(0, 0, React.createElement(PlaylistRow, {key: this.props.playlist.id, name: this.props.playlist.name}));
+      rows.splice(0, 0, <PlaylistRow key={this.props.playlist.id} name={this.props.playlist.name} />);
     }
 
     return (
-      React.createElement("div", null, 
-        React.createElement("table", {className: "table trackTable"}, 
-          React.createElement("thead", null, 
-            React.createElement(TrackOrder, {
-              fields: this.fields, 
-              orderPattern: this.state.orderPattern, 
-              onChangeOrder: this.handleChangeOrder})
-          ), 
-          React.createElement("tbody", null, rows)
-        ), 
-        React.createElement(NavigationWheel, {
-          rowsOnPage: this.props.rowsOnPage, 
-          rowsCount: rowsCount, 
-          onChangePage: this.handleChangePage, 
-          page: this.state.page})
-      )
+      <div>
+        <table className="table trackTable">
+          <thead>
+            <TrackOrder
+              fields={this.fields}
+              orderPattern={this.state.orderPattern}
+              onChangeOrder={this.handleChangeOrder} />
+          </thead>
+          <tbody>{rows}</tbody>
+        </table>
+        <NavigationWheel
+          rowsOnPage={this.props.rowsOnPage}
+          rowsCount={rowsCount}
+          onChangePage={this.handleChangePage}
+          page={this.state.page} />
+      </div>
     );
   }
 });
 
-var FilterableTrackTable = React.createClass({displayName: "FilterableTrackTable",
+var FilterableTrackTable = React.createClass({
   getInitialState: function(){
     return {
       playlist: { id: 0, name: '' },
@@ -407,28 +407,28 @@ var FilterableTrackTable = React.createClass({displayName: "FilterableTrackTable
   },
   render: function(){
     return (
-      React.createElement("div", {className: "filterableTrackTable"}, 
-        React.createElement(FilterForm, {
-          playlistId: this.state.playlist.id, 
-          filterTrack: this.state.filterTrack, 
-          rowsOnPage: this.state.rowsOnPage, 
-          minRowsOnPage: this.minRowsOnPage, 
-          maxRowsOnPage: this.maxRowsOnPage, 
-          playlists: this.state.playlists, 
-          onUserInput: this.handleUserInput}), 
-        React.createElement(TrackTable, {
-          playlist: this.state.playlist, 
-          filterTrack: this.state.filterTrack, 
-          rowsOnPage: this.state.rowsOnPage, 
-          tracks: this.state.tracks})
-      )
+      <div className="filterableTrackTable">
+        <FilterForm 
+          playlistId={this.state.playlist.id}
+          filterTrack={this.state.filterTrack}
+          rowsOnPage={this.state.rowsOnPage}
+          minRowsOnPage={this.minRowsOnPage}
+          maxRowsOnPage={this.maxRowsOnPage}
+          playlists={this.state.playlists}
+          onUserInput={this.handleUserInput} />
+        <TrackTable
+          playlist={this.state.playlist}
+          filterTrack={this.state.filterTrack}
+          rowsOnPage={this.state.rowsOnPage}
+          tracks={this.state.tracks} />
+      </div>
     );
   }
 });
 
 React.render(
-  React.createElement(FilterableTrackTable, {
-      playlistUrl: "app_dev.php/playlist", 
-      trackByPlaylistUrl: "app_dev.php/trackByPlaylist"}),
+  <FilterableTrackTable
+      playlistUrl="app_dev.php/playlist"
+      trackByPlaylistUrl="app_dev.php/trackByPlaylist" />,
   document.getElementById('content')
 );

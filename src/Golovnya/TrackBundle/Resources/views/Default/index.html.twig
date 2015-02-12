@@ -7,39 +7,40 @@
     <title>{% block title %}Bootstrap 101 Template{% endblock %}</title>
 
     {% block stylesheets %}
-    <!-- Bootstrap -->
-    <link href="{{ asset('bundles/golovnyatrack/vendor/bootstrap/dist/css/bootstrap.css') }}" rel="stylesheet">
-    <link href="{{ asset('bundles/golovnyatrack/css/track.css') }}" rel="stylesheet">
-
-    
-    <link href="{{ asset('bundles/golovnyatrack/vendor/jasmine/images/jasmine_favicon.png') }}" rel="stylesheet">
-    <link href="{{ asset('bundles/golovnyatrack/vendor/jasmine/lib/jasmine-core/jasmine.css') }}" rel="stylesheet">
+      <link href="{{ asset('bundles/golovnyatrack/vendor/jasmine/images/jasmine_favicon.png') }}" rel="shortcut icon" type="image/png">
+      <!-- Bootstrap -->
+      {% stylesheets output='css/main.css'
+          '@bootstrap_css' 
+          '@GolovnyaTrackBundle/Resources/public/css/track.css' 
+          '@jasminecss' %}
+           <link rel="stylesheet" type="text/css" media="all" href="{{ asset_url }}" />
+      {% endstylesheets %}
     {% endblock %}
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
-      <script src="{{ asset('bundles/golovnyatrack/vendor/html5shiv/dist/html5shiv.js') }}"></script>
-      <script src="{{ asset('bundles/golovnyatrack/vendor/respond/dist/respond.js') }}"></script>
+      {% javascripts output='js/shiv_respond.js'
+          '@GolovnyaTrackBundle/Resources/public/vendor/html5shiv/dist/html5shiv.js'
+          '@GolovnyaTrackBundle/Resources/public/vendor/respond/dest/respond.src.js' %}
+          <script src="{{ asset_url }}"></script>
+      {% endjavascripts %}
     <![endif]-->
   </head>
   <body>
     <div id="content"></div>
 
     {% block javascripts %}
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="{{ asset('bundles/golovnyatrack/vendor/react/react-with-addons.js') }}"></script>
-    <script src="{{ asset('bundles/golovnyatrack/vendor/jquery/dist/jquery.js') }}"></script>
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="{{ asset('bundles/golovnyatrack/vendor/bootstrap/dist/js/bootstrap.js') }}"></script>
-    <script src="{{ asset('bundles/golovnyatrack/js/build/track.js') }}"></script>
-
-    <script src="{{ asset('bundles/golovnyatrack/vendor/jasmine/lib/jasmine-core/jasmine.js') }}"></script>
-    <script src="{{ asset('bundles/golovnyatrack/vendor/jasmine/lib/jasmine-core/jasmine-html.js') }}"></script>
-    <script src="{{ asset('bundles/golovnyatrack/vendor/jasmine/lib/jasmine-core/boot.js') }}"></script>
-    <script src="{{ asset('bundles/golovnyatrack/vendor/jasmine-ajax/lib/mock-ajax.js') }}"></script>
-
-    <script src="{{ asset('bundles/golovnyatrack/js/build/trackSpec.js') }}"></script>
+      <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+      <!-- Include all compiled plugins (below), or include individual files as needed -->
+      {% javascripts output='js/main.js'
+          '@GolovnyaTrackBundle/Resources/public/vendor/react/react-with-addons.js'
+          '@GolovnyaTrackBundle/Resources/public/vendor/jquery/dist/jquery.js'
+          '@bootstrap_js'
+          '@GolovnyaTrackBundle/Resources/public/js/src/track.js'
+          '@jasminejs' %}
+          <script type="text/javascript" src="{{ asset_url }}"></script>
+      {% endjavascripts %}
 
     {% endblock %}
   </body>
