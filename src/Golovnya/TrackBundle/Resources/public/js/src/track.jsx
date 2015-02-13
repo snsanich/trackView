@@ -479,7 +479,7 @@ var TrackTable = React.createClass({
 var FilterableTrackTable = React.createClass({
   getInitialState: function(){
     return {
-      playlist: { id: '0', name: '' },
+      playlist: { id: 0, name: '' },
       filterTrack: '',
       rowsOnPage: 10,
       playlists: [],
@@ -508,7 +508,7 @@ var FilterableTrackTable = React.createClass({
   getTracks: function(playlistId, nextState){
 
     var url = this.props.trackByPlaylistUrl;
-    if (playlistId !== "0"){
+    if (playlistId !== 0){
       url = url + '/' + playlistId;
     }
 
@@ -526,7 +526,9 @@ var FilterableTrackTable = React.createClass({
   },
   minRowsOnPage: 1,
   maxRowsOnPage: 300,
-  handleUserInput: function(playlistId, filterTrack, rowsOnPage){
+  handleUserInput: function(playlistValue, filterTrack, rowsOnPage){
+
+    var playlistId = Number.parseInt(playlistValue);
 
     var rowsOnPageInt = Number.parseInt(rowsOnPage);
     if (isNaN(rowsOnPageInt) || rowsOnPageInt < this.minRowsOnPage){
