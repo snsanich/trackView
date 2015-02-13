@@ -66,7 +66,8 @@ How make a mongo dump?
 
 How start application?
 
-  >php app/console cache:clear --env=prod
+  >php app/console cache:clear --env=prod;
+
   >php app/console assetic:dump --env=prod
 
 [6]:  http://symfony.com/doc/2.3/bundles/SensioFrameworkExtraBundle/index.html
