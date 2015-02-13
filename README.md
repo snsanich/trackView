@@ -5,6 +5,7 @@ View preloaded tracks
 [![Coverage Status](https://coveralls.io/repos/snsanich/trackView/badge.svg)](https://coveralls.io/r/snsanich/trackView)
 [![Code Climate](https://codeclimate.com/repos/54dd411ee30ba06dc4000464/badges/2a8c9637cea7dfa42587/gpa.svg)](https://codeclimate.com/repos/54dd411ee30ba06dc4000464/feed)
 [![Dependency Status](https://www.versioneye.com/user/projects/54dd4f17c1bbbd5f82000540/badge.svg?style=flat)](https://www.versioneye.com/user/projects/54dd4f17c1bbbd5f82000540)
+[![Dependency Status](https://www.versioneye.com/user/projects/54dd4f14c1bbbd9bd70005bd/badge.svg?style=flat)](https://www.versioneye.com/user/projects/54dd4f14c1bbbd9bd70005bd)
 
 Welcome to the Track View - project for education
 
