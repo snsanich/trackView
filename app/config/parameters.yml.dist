@@ -17,4 +17,7 @@ parameters:
     locale:            en
 
     # A secret key that's used to generate certain security-related tokens
-    secret:            ThisTokenIsNotSoSecretChangeIt
+    secret:            ad017992748b301a9a36fdd13ec35de33f3e6ecc
+
+    in_memory_user:    userpass
+    in_memory_admin:   adminpass

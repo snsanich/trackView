@@ -69,7 +69,7 @@ class TrackController extends Controller
             ->getRepository("GolovnyaTrackBundle:Playlist")
             ->findAll();
 
-        $mappedPlaylists = array_map(function($playlist){
+        $mappedPlaylists = array_map(function(Playlist $playlist){
             return array(
               "id" => $playlist->getId(),
               "name" => $playlist->getName()
