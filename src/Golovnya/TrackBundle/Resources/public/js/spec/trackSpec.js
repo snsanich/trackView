@@ -147,7 +147,7 @@ describe("selected playlist", function() {
 
     var row = TestUtils.findRenderedComponentWithType(
       filterableTrackTable, TrackRow);
-    expect(row.props.track.name).toBe('name4');
+    expect(row.props.track.name).toBe('name2');
   });
 
   it("does 'filter track' work with existing track", function() {

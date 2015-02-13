@@ -89,81 +89,215 @@ var TrackOrder = React.createClass({
 });
 
 var NavigationWheel = React.createClass({
+  MIN_PAGE: 1,
+  maxPage: 1,
+  PREV: 'prev',
+  NEXT: 'next',
+  SKIP: '...',
+  PAGES_IN_ROLL: 7,
+  PAGES_AT_SIZE: 3,
   getInitialProps: function(){
     return {
       rowsCount: 0,
       rowsOnPage: 10,
-      page: 1
+      page: this.MIN_PAGE
     };
   },
   handlePage: function(e){
     e.preventDefault();
-    var pageStr = e.currentTarget.getAttribute('data-page-number');
-    var pageInt = Number.parseInt(pageStr);
-    this.props.onChangePage(
-      pageInt
+    var value = e.currentTarget.getAttribute('data-page-number');
+    var page = Number.parseInt(value);
+    page = Math.max(this.MIN_PAGE, page);
+
+    if (Number.isInteger(page)){
+      this.props.onChangePage(
+        page
+      );
+    }
+  },
+  calcMaxPage: function(){
+    var maxPage = Math.ceil(this.props.rowsCount/this.props.rowsOnPage);
+    if (maxPage === 0 || Number.isInteger(maxPage) === false){
+      maxPage = 1;
+    }
+    return maxPage;
+  },
+  getPageRange: function(){
+    var pages = [
+      {
+        'value': this.PREV
+      },
+      {
+        'data-page-number': 1,
+        'aria-label': 'page1',
+        'onClick': this.handlePage,      
+        'value': 1
+      }
+    ];
+
+    if (this.maxPage <= this.PAGES_IN_ROLL){
+      for (var i = 2; i <= this.maxPage; i++){
+        pages.push({
+          'data-page-number': i,
+          'aria-label': 'page' + i,
+          'onClick': this.handlePage,      
+          'value': i
+        });
+      }
+      return pages;
+    }
+
+    var isTrimAtStart = (this.props.page - 1) > this.PAGES_AT_SIZE;
+    var isTrimAtEnd = (this.maxPage - this.props.page) > this.PAGES_AT_SIZE;
+
+    if (isTrimAtStart && isTrimAtEnd){
+      pages.push({
+        'value': this.SKIP
+      });
+
+      for (var i = this.props.page - 1; i <= this.props.page + 1; i++){
+        pages.push({
+          'data-page-number': i,
+          'aria-label': 'page' + i,
+          'onClick': this.handlePage,      
+          'value': i
+        });
+      }
+      
+      pages.push({
+        'value': this.SKIP
+      });
+      pages.push({
+        'data-page-number': this.maxPage,
+        'aria-label': 'page' + this.maxPage,
+        'onClick': this.handlePage,      
+        'value': this.maxPage
+      });
+      return pages;
+    }
+
+    if (isTrimAtStart) {
+      pages.push({
+        'value': this.SKIP
+      });
+
+      for (var i = this.maxPage - 5; i <= this.maxPage; i++){
+        pages.push({
+          'data-page-number': i,
+          'aria-label': 'page' + i,
+          'onClick': this.handlePage,      
+          'value': i
+        });
+      }
+      
+      return pages;
+    }
+
+    if (isTrimAtEnd) {
+
+      for (var i = 2; i <= 5; i++){
+        pages.push({
+          'data-page-number': i,
+          'aria-label': 'page' + i,
+          'onClick': this.handlePage,      
+          'value': i
+        });
+      }
+
+      pages.push({
+        value: this.SKIP
+      });
+      pages.push({
+        'data-page-number': this.maxPage,
+        'aria-label': 'page' + this.maxPage,
+        'onClick': this.handlePage,      
+        'value': this.maxPage
+      });
+      
+      return pages;
+    }
+  },
+  renderNavigationElem: function(page, index){
+
+    var disabledClassName = "";
+
+    if (page.value === this.PREV){
+      var prevPage = Math.max(this.props.page - 1, 1);
+      if (this.props.page === this.MIN_PAGE) {
+        var disabledClassName = "disabled";
+      }
+      return (
+        <li key={index} className={disabledClassName}>
+          <a href="#" aria-label="Previous" onClick={this.handlePage} data-page-number={prevPage}>
+            <span aria-hidden="true">&laquo;</span>
+          </a>
+        </li>
+      );
+    }
+
+    if (page.value === this.NEXT){
+      var nextPage = Math.min(this.props.page + 1, this.maxPage);
+      if (this.props.page === this.maxPage) {
+        var disabledClassName = "disabled";
+      }
+      return (
+        <li key={index} className={disabledClassName}>
+          <a href="#" aria-label="Next" onClick={this.handlePage} data-page-number={nextPage}>
+            <span aria-hidden="true">&raquo;</span>
+          </a>
+        </li>
+      );
+    }
+
+    if (page.value === this.SKIP){
+      return (
+        <li key={index} className="disabled">
+          <a href="#" aria-label="..." onClick={this.handlePage} data-page-number={NaN}>
+            <span aria-hidden="true">...</span>
+          </a>
+        </li>
+      );
+    }
+
+    var item = {
+      'data-page-number': page['data-page-number'],
+      'aria-label': page['aria-label'],
+      'onClick': page['onClick']
+    };
+    if (page.value === this.props.page){
+      return (
+        <li key={index} className="active">
+          <a href="#" {...item}>
+            <span> {page.value} </span><span className="sr-only">(current)</span>
+          </a>
+        </li>
+      );
+    }
+    return (
+      <li key={index}>
+        <a href="#" {...item}>{page.value}</a>
+      </li>
     );
   },
   render: function(){
+    this.maxPage = this.calcMaxPage();
+    var pages = this.getPageRange();
+    pages.push({
+      'value': this.NEXT
+    });
+
+    var navigation = [];
+    var indexKey = 1;
+    pages.forEach(function(page){
+      var elem = this.renderNavigationElem(page, indexKey++);
+      navigation.push(elem);
+    }.bind(this));
+
     var navClass = this.props.rowsCount === 0 ? "sr-only" : "";
-    var maxPage = Math.ceil(this.props.rowsCount/this.props.rowsOnPage);
-    if (maxPage === 0){
-      maxPage = 1;
-    }
-
-    var className = "";
-    var navItems = [];
-
-    className = this.props.page == 1 ? "disabled" : "";
-    var navPrev = (
-      <li key="prev" className={className}>
-        <a href="#" aria-label="Previous" onClick={this.handlePage} data-page-number="1">
-          <span aria-hidden="true">&laquo;</span>
-        </a>
-      </li>
-    );
-
-    className = this.props.page == maxPage ? "disabled" : "";
-    var navNext = (
-      <li key="next" className={className}>
-        <a href="#" aria-label="Next" onClick={this.handlePage} data-page-number={maxPage}>
-          <span aria-hidden="true">&raquo;</span>
-        </a>
-      </li>
-    );
-
-
-/**
- * @TODO: Where put <li className="disabled"><a href="#">...</a></li>
- */
-    var pageAriaName = null,
-      navItem = null;
-    for (var i = 1; i <= maxPage; i++){
-      pageAriaName = "page" + i;
-      if (i == this.props.page){
-        navItem = (
-          <li key={i} className="active">
-            <a href="#" aria-label={pageAriaName} onClick={this.handlePage} data-page-number={i}>
-              <span> {i} </span><span className="sr-only">(current)</span>
-            </a>
-          </li>
-        );
-      } else {
-        navItem = (
-          <li key={i}>
-            <a href="#" aria-label={pageAriaName} onClick={this.handlePage} data-page-number={i}>{i}</a>
-          </li>
-        );
-      }
-
-      navItems.push(navItem);
-    }
     return (
       <nav className={navClass}>
         <ul className="pagination">
-          {navPrev}
-          {navItems}
-          {navNext}
+          {navigation}
         </ul>
       </nav>
     );

@@ -89,81 +89,215 @@ var TrackOrder = React.createClass({displayName: "TrackOrder",
 });
 
 var NavigationWheel = React.createClass({displayName: "NavigationWheel",
+  MIN_PAGE: 1,
+  maxPage: 1,
+  PREV: 'prev',
+  NEXT: 'next',
+  SKIP: '...',
+  PAGES_IN_ROLL: 7,
+  PAGES_AT_SIZE: 3,
   getInitialProps: function(){
     return {
       rowsCount: 0,
       rowsOnPage: 10,
-      page: 1
+      page: this.MIN_PAGE
     };
   },
   handlePage: function(e){
     e.preventDefault();
-    var pageStr = e.currentTarget.getAttribute('data-page-number');
-    var pageInt = Number.parseInt(pageStr);
-    this.props.onChangePage(
-      pageInt
+    var value = e.currentTarget.getAttribute('data-page-number');
+    var page = Number.parseInt(value);
+    page = Math.max(this.MIN_PAGE, page);
+
+    if (Number.isInteger(page)){
+      this.props.onChangePage(
+        page
+      );
+    }
+  },
+  calcMaxPage: function(){
+    var maxPage = Math.ceil(this.props.rowsCount/this.props.rowsOnPage);
+    if (maxPage === 0 || Number.isInteger(maxPage) === false){
+      maxPage = 1;
+    }
+    return maxPage;
+  },
+  getPageRange: function(){
+    var pages = [
+      {
+        'value': this.PREV
+      },
+      {
+        'data-page-number': 1,
+        'aria-label': 'page1',
+        'onClick': this.handlePage,      
+        'value': 1
+      }
+    ];
+
+    if (this.maxPage <= this.PAGES_IN_ROLL){
+      for (var i = 2; i <= this.maxPage; i++){
+        pages.push({
+          'data-page-number': i,
+          'aria-label': 'page' + i,
+          'onClick': this.handlePage,      
+          'value': i
+        });
+      }
+      return pages;
+    }
+
+    var isTrimAtStart = (this.props.page - 1) > this.PAGES_AT_SIZE;
+    var isTrimAtEnd = (this.maxPage - this.props.page) > this.PAGES_AT_SIZE;
+
+    if (isTrimAtStart && isTrimAtEnd){
+      pages.push({
+        'value': this.SKIP
+      });
+
+      for (var i = this.props.page - 1; i <= this.props.page + 1; i++){
+        pages.push({
+          'data-page-number': i,
+          'aria-label': 'page' + i,
+          'onClick': this.handlePage,      
+          'value': i
+        });
+      }
+      
+      pages.push({
+        'value': this.SKIP
+      });
+      pages.push({
+        'data-page-number': this.maxPage,
+        'aria-label': 'page' + this.maxPage,
+        'onClick': this.handlePage,      
+        'value': this.maxPage
+      });
+      return pages;
+    }
+
+    if (isTrimAtStart) {
+      pages.push({
+        'value': this.SKIP
+      });
+
+      for (var i = this.maxPage - 5; i <= this.maxPage; i++){
+        pages.push({
+          'data-page-number': i,
+          'aria-label': 'page' + i,
+          'onClick': this.handlePage,      
+          'value': i
+        });
+      }
+      
+      return pages;
+    }
+
+    if (isTrimAtEnd) {
+
+      for (var i = 2; i <= 5; i++){
+        pages.push({
+          'data-page-number': i,
+          'aria-label': 'page' + i,
+          'onClick': this.handlePage,      
+          'value': i
+        });
+      }
+
+      pages.push({
+        value: this.SKIP
+      });
+      pages.push({
+        'data-page-number': this.maxPage,
+        'aria-label': 'page' + this.maxPage,
+        'onClick': this.handlePage,      
+        'value': this.maxPage
+      });
+      
+      return pages;
+    }
+  },
+  renderNavigationElem: function(page, index){
+
+    var disabledClassName = "";
+
+    if (page.value === this.PREV){
+      var prevPage = Math.max(this.props.page - 1, 1);
+      if (this.props.page === this.MIN_PAGE) {
+        var disabledClassName = "disabled";
+      }
+      return (
+        React.createElement("li", {key: index, className: disabledClassName}, 
+          React.createElement("a", {href: "#", "aria-label": "Previous", onClick: this.handlePage, "data-page-number": prevPage}, 
+            React.createElement("span", {"aria-hidden": "true"}, "«")
+          )
+        )
+      );
+    }
+
+    if (page.value === this.NEXT){
+      var nextPage = Math.min(this.props.page + 1, this.maxPage);
+      if (this.props.page === this.maxPage) {
+        var disabledClassName = "disabled";
+      }
+      return (
+        React.createElement("li", {key: index, className: disabledClassName}, 
+          React.createElement("a", {href: "#", "aria-label": "Next", onClick: this.handlePage, "data-page-number": nextPage}, 
+            React.createElement("span", {"aria-hidden": "true"}, "»")
+          )
+        )
+      );
+    }
+
+    if (page.value === this.SKIP){
+      return (
+        React.createElement("li", {key: index, className: "disabled"}, 
+          React.createElement("a", {href: "#", "aria-label": "...", onClick: this.handlePage, "data-page-number": NaN}, 
+            React.createElement("span", {"aria-hidden": "true"}, "...")
+          )
+        )
+      );
+    }
+
+    var item = {
+      'data-page-number': page['data-page-number'],
+      'aria-label': page['aria-label'],
+      'onClick': page['onClick']
+    };
+    if (page.value === this.props.page){
+      return (
+        React.createElement("li", {key: index, className: "active"}, 
+          React.createElement("a", React.__spread({href: "#"},  item), 
+            React.createElement("span", null, " ", page.value, " "), React.createElement("span", {className: "sr-only"}, "(current)")
+          )
+        )
+      );
+    }
+    return (
+      React.createElement("li", {key: index}, 
+        React.createElement("a", React.__spread({href: "#"},  item), page.value)
+      )
     );
   },
   render: function(){
+    this.maxPage = this.calcMaxPage();
+    var pages = this.getPageRange();
+    pages.push({
+      'value': this.NEXT
+    });
+
+    var navigation = [];
+    var indexKey = 1;
+    pages.forEach(function(page){
+      var elem = this.renderNavigationElem(page, indexKey++);
+      navigation.push(elem);
+    }.bind(this));
+
     var navClass = this.props.rowsCount === 0 ? "sr-only" : "";
-    var maxPage = Math.ceil(this.props.rowsCount/this.props.rowsOnPage);
-    if (maxPage === 0){
-      maxPage = 1;
-    }
-
-    var className = "";
-    var navItems = [];
-
-    className = this.props.page == 1 ? "disabled" : "";
-    var navPrev = (
-      React.createElement("li", {key: "prev", className: className}, 
-        React.createElement("a", {href: "#", "aria-label": "Previous", onClick: this.handlePage, "data-page-number": "1"}, 
-          React.createElement("span", {"aria-hidden": "true"}, "«")
-        )
-      )
-    );
-
-    className = this.props.page == maxPage ? "disabled" : "";
-    var navNext = (
-      React.createElement("li", {key: "next", className: className}, 
-        React.createElement("a", {href: "#", "aria-label": "Next", onClick: this.handlePage, "data-page-number": maxPage}, 
-          React.createElement("span", {"aria-hidden": "true"}, "»")
-        )
-      )
-    );
-
-
-/**
- * @TODO: Where put <li className="disabled"><a href="#">...</a></li>
- */
-    var pageAriaName = null,
-      navItem = null;
-    for (var i = 1; i <= maxPage; i++){
-      pageAriaName = "page" + i;
-      if (i == this.props.page){
-        navItem = (
-          React.createElement("li", {key: i, className: "active"}, 
-            React.createElement("a", {href: "#", "aria-label": pageAriaName, onClick: this.handlePage, "data-page-number": i}, 
-              React.createElement("span", null, " ", i, " "), React.createElement("span", {className: "sr-only"}, "(current)")
-            )
-          )
-        );
-      } else {
-        navItem = (
-          React.createElement("li", {key: i}, 
-            React.createElement("a", {href: "#", "aria-label": pageAriaName, onClick: this.handlePage, "data-page-number": i}, i)
-          )
-        );
-      }
-
-      navItems.push(navItem);
-    }
     return (
       React.createElement("nav", {className: navClass}, 
         React.createElement("ul", {className: "pagination"}, 
-          navPrev, 
-          navItems, 
-          navNext
+          navigation
         )
       )
     );
@@ -428,7 +562,7 @@ var FilterableTrackTable = React.createClass({displayName: "FilterableTrackTable
 
 React.render(
   React.createElement(FilterableTrackTable, {
-      playlistUrl: "playlist", 
-      trackByPlaylistUrl: "trackByPlaylist"}),
+      playlistUrl: "app_dev.php/playlist", 
+      trackByPlaylistUrl: "app_dev.php/trackByPlaylist"}),
   document.getElementById('content')
 );
