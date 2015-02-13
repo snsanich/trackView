@@ -20,3 +20,7 @@ install:
 
 script:
     - ls -d src/Golovnya/*/Tests | parallel --gnu --keep-order 'echo -e "\\nRunning {} tests"; phpunit -c app/ --exclude-group tty,benchmark,intl-data {} || (echo -e "\\e[41mKO\\e[0m {}" && $(exit 1));'
+
+addons:
+    code_climate:
+        repo_token: d02b8335d5f376fddb04c3e09794da6c8d704683af82f29e573bc182e9cef0e9

@@ -2,6 +2,8 @@ View preloaded tracks
 =====================
 
 [![Build Status](https://travis-ci.org/snsanich/trackView.svg)](https://travis-ci.org/snsanich/trackView)
+[![Coverage Status](https://coveralls.io/repos/snsanich/trackView/badge.svg)](https://coveralls.io/r/snsanich/trackView)
+[![Code Climate](https://codeclimate.com/repos/54dd411ee30ba06dc4000464/badges/2a8c9637cea7dfa42587/gpa.svg)](https://codeclimate.com/repos/54dd411ee30ba06dc4000464/feed)
 
 Welcome to the Track View - project for education
 
