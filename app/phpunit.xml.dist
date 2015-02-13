@@ -33,4 +33,8 @@
             </exclude>
         </whitelist>
     </filter>
+    <logging>
+        <log type="coverage-clover" target="app/logs/clover.xml"/>
+        <log type="junit" target="app/logs/junit.xml" logIncompleteSkipped="false"/>
+    </logging>
 </phpunit>

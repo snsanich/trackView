@@ -7,6 +7,7 @@ env:
         - components=no
 before_script:
     - travis_retry sudo apt-get install parallel
+    - composer update satooshi/php-coveralls
 
 install:
     - if [ $(php -r "echo PHP_MINOR_VERSION;") -le 4 ]; then echo "extension = mongo.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini; fi;
@@ -19,7 +20,12 @@ install:
     - mongorestore src/Golovnya/TrackBundle/Resources/data/dump
 
 script:
-    - ls -d src/Golovnya/*/Tests | parallel --gnu --keep-order 'echo -e "\\nRunning {} tests"; phpunit -c app/ --exclude-group tty,benchmark,intl-data {} || (echo -e "\\e[41mKO\\e[0m {}" && $(exit 1));'
+    - mkdir -p build/logs
+    - phpunit -c app/phpunit.xml.dist
+    - phpunit -c app/phpunit.xml.dist --coverage-clover build/logs/clover.xml --log-junit build/logs/junit.xml
+
+after_script:
+    - php bin/coveralls -v --exclude-no-stmt
 
 addons:
     code_climate:
