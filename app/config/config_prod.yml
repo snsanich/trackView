@@ -68,3 +68,7 @@ assetic:
             output: 'css/main.css'
             filters:
                 - uglifycss
+
+twig:
+    globals:
+        base_url: /

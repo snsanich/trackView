@@ -44,3 +44,7 @@ assetic:
 parameters:
     auth_required_channel: 'http'
     kernel_debug: true
+
+twig:
+    globals:
+        base_url: /app_dev.php/
