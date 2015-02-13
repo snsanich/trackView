@@ -123,20 +123,21 @@ var NavigationWheel = React.createClass({
     return maxPage;
   },
   getPageRange: function(){
-    var pages = [
-      {
-        'value': this.PREV
-      },
-      {
-        'data-page-number': 1,
-        'aria-label': 'page1',
-        'onClick': this.handlePage,      
-        'value': 1
-      }
-    ];
+    var i = 1,
+      pages = [
+        {
+          'value': this.PREV
+        },
+        {
+          'data-page-number': 1,
+          'aria-label': 'page1',
+          'onClick': this.handlePage,      
+          'value': 1
+        }
+      ];
 
     if (this.maxPage <= this.PAGES_IN_ROLL){
-      for (var i = 2; i <= this.maxPage; i++){
+      for (i = 2; i <= this.maxPage; i++){
         pages.push({
           'data-page-number': i,
           'aria-label': 'page' + i,
@@ -155,7 +156,7 @@ var NavigationWheel = React.createClass({
         'value': this.SKIP
       });
 
-      for (var i = this.props.page - 1; i <= this.props.page + 1; i++){
+      for (i = this.props.page - 1; i <= this.props.page + 1; i++){
         pages.push({
           'data-page-number': i,
           'aria-label': 'page' + i,
@@ -181,7 +182,7 @@ var NavigationWheel = React.createClass({
         'value': this.SKIP
       });
 
-      for (var i = this.maxPage - 5; i <= this.maxPage; i++){
+      for (i = this.maxPage - 5; i <= this.maxPage; i++){
         pages.push({
           'data-page-number': i,
           'aria-label': 'page' + i,
@@ -195,7 +196,7 @@ var NavigationWheel = React.createClass({
 
     if (isTrimAtEnd) {
 
-      for (var i = 2; i <= 5; i++){
+      for (i = 2; i <= 5; i++){
         pages.push({
           'data-page-number': i,
           'aria-label': 'page' + i,
@@ -217,36 +218,44 @@ var NavigationWheel = React.createClass({
       return pages;
     }
   },
+  renderNavNext: function(index){
+    var disabledClassName = "";
+    var nextPage = Math.min(this.props.page + 1, this.maxPage);
+    if (this.props.page === this.maxPage) {
+      disabledClassName = "disabled";
+    }
+    return (
+      <li key={index} className={disabledClassName}>
+        <a href="#" aria-label="Next" onClick={this.handlePage} data-page-number={nextPage}>
+          <span aria-hidden="true">&raquo;</span>
+        </a>
+      </li>
+    );
+  },
+  renderNavPrev: function(index){
+    var disabledClassName = "";
+    var prevPage = Math.max(this.props.page - 1, 1);
+    if (this.props.page === this.MIN_PAGE) {
+      disabledClassName = "disabled";
+    }
+    return (
+      <li key={index} className={disabledClassName}>
+        <a href="#" aria-label="Previous" onClick={this.handlePage} data-page-number={prevPage}>
+          <span aria-hidden="true">&laquo;</span>
+        </a>
+      </li>
+    );
+  },
   renderNavigationElem: function(page, index){
 
     var disabledClassName = "";
 
     if (page.value === this.PREV){
-      var prevPage = Math.max(this.props.page - 1, 1);
-      if (this.props.page === this.MIN_PAGE) {
-        var disabledClassName = "disabled";
-      }
-      return (
-        <li key={index} className={disabledClassName}>
-          <a href="#" aria-label="Previous" onClick={this.handlePage} data-page-number={prevPage}>
-            <span aria-hidden="true">&laquo;</span>
-          </a>
-        </li>
-      );
+      return this.renderNavPrev(index);
     }
 
     if (page.value === this.NEXT){
-      var nextPage = Math.min(this.props.page + 1, this.maxPage);
-      if (this.props.page === this.maxPage) {
-        var disabledClassName = "disabled";
-      }
-      return (
-        <li key={index} className={disabledClassName}>
-          <a href="#" aria-label="Next" onClick={this.handlePage} data-page-number={nextPage}>
-            <span aria-hidden="true">&raquo;</span>
-          </a>
-        </li>
-      );
+      return this.renderNavNext(index);
     }
 
     if (page.value === this.SKIP){
@@ -262,8 +271,9 @@ var NavigationWheel = React.createClass({
     var item = {
       'data-page-number': page['data-page-number'],
       'aria-label': page['aria-label'],
-      'onClick': page['onClick']
+      'onClick': page.onClick
     };
+
     if (page.value === this.props.page){
       return (
         <li key={index} className="active">
@@ -273,11 +283,13 @@ var NavigationWheel = React.createClass({
         </li>
       );
     }
+
     return (
       <li key={index}>
         <a href="#" {...item}>{page.value}</a>
       </li>
     );
+
   },
   render: function(){
     this.maxPage = this.calcMaxPage();
@@ -367,7 +379,7 @@ var TrackTable = React.createClass({
     return {
       page: 1,
       orderPattern: 'name:ASC'
-    }
+    };
   },
   handleChangeOrder: function(orderPattern){
     this.setState({
@@ -467,12 +479,12 @@ var TrackTable = React.createClass({
 var FilterableTrackTable = React.createClass({
   getInitialState: function(){
     return {
-      playlist: { id: 0, name: '' },
+      playlist: { id: '0', name: '' },
       filterTrack: '',
       rowsOnPage: 10,
       playlists: [],
       tracks: []
-    }
+    };
   },
   getInitialProps: function(){
     return {
@@ -496,7 +508,7 @@ var FilterableTrackTable = React.createClass({
   getTracks: function(playlistId, nextState){
 
     var url = this.props.trackByPlaylistUrl;
-    if (playlistId != "0"){
+    if (playlistId !== "0"){
       url = url + '/' + playlistId;
     }
 
@@ -504,7 +516,7 @@ var FilterableTrackTable = React.createClass({
       url: url,
       dataType: 'json',
       success: function(data) {
-        nextState['tracks'] = data.tracks;
+        nextState.tracks = data.tracks;
         this.setState(nextState);
       }.bind(this),
       error: function(xhr, status, err) {
@@ -526,7 +538,7 @@ var FilterableTrackTable = React.createClass({
 
     var selectedPlaylist = { id: 0, name: '' };
     this.state.playlists.forEach(function(playlist){
-      if (playlist.id == playlistId){
+      if (playlist.id === playlistId){
         selectedPlaylist = playlist;
       }
     });
