@@ -1,1 +1,5 @@
 repo_token: 1ITne9VBha0QOduUirZxfhZo3hl2iHUl6
+
+src_dir: src
+coverage_clover: app/logs/clover.xml
+json_path: app/logs/coveralls-upload.json

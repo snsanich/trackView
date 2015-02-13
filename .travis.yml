@@ -20,9 +20,8 @@ install:
     - mongorestore src/Golovnya/TrackBundle/Resources/data/dump
 
 script:
-    - mkdir -p build/logs
     - phpunit -c app/phpunit.xml.dist
-    - phpunit -c app/phpunit.xml.dist --coverage-clover build/logs/clover.xml --log-junit build/logs/junit.xml
+    - phpunit -c app/phpunit.xml.dist --coverage-clover app/logs/clover.xml --log-junit app/logs/junit.xml
 
 after_script:
     - php bin/coveralls -v --exclude-no-stmt
