@@ -12,7 +12,7 @@ describe("selected playlist", function() {
 
     jasmine.Ajax.install();
     jasmine.Ajax.stubRequest("app_dev.php/testPlaylist").andReturn({
-      responseText: '{"playlists":[{"id":1,"name":"Playlist1"},{"id":2,"name":"Playlist2"}]}',
+      responseText: '{"playlists":[{"id":"1","name":"Playlist1"},{"id":"2","name":"Playlist2"}]}',
       status: 200,
       contentType: 'application/json'
     });

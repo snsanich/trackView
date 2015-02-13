@@ -4,9 +4,9 @@ namespace Golovnya\TrackBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
-use Golovnya\TrackBundle\Document\Track;
 use Golovnya\TrackBundle\Document\Playlist;
 
 use Symfony\Component\HttpFoundation\Response;
@@ -16,6 +16,7 @@ class TrackController extends Controller
 
     /**
      * @Route("/trackByPlaylist/{id}", defaults={"id" = ""})
+     * @Method("GET")
      * @Template()
      * @param $id string
      * @return Response
@@ -32,7 +33,7 @@ class TrackController extends Controller
             return $response;
         }
 
-        $trackIds = array_map(function($track){
+        $trackIds = array_map(function(\MongoId $track){
             $list = (array)$track;
             return $list['$id'];
         }, $playlist->getTracks());
@@ -61,6 +62,7 @@ class TrackController extends Controller
 
     /**
      * @Route("/playlist")
+     * @Method("GET")
      * @Template()
      */
     public function playlistAction()

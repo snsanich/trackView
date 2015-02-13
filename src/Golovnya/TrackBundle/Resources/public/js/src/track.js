@@ -479,7 +479,7 @@ var TrackTable = React.createClass({displayName: "TrackTable",
 var FilterableTrackTable = React.createClass({displayName: "FilterableTrackTable",
   getInitialState: function(){
     return {
-      playlist: { id: 0, name: '' },
+      playlist: { id: "0", name: '' },
       filterTrack: '',
       rowsOnPage: 10,
       playlists: [],
@@ -508,7 +508,7 @@ var FilterableTrackTable = React.createClass({displayName: "FilterableTrackTable
   getTracks: function(playlistId, nextState){
 
     var url = this.props.trackByPlaylistUrl;
-    if (playlistId !== 0){
+    if (playlistId !== "0"){
       url = url + '/' + playlistId;
     }
 
@@ -526,9 +526,7 @@ var FilterableTrackTable = React.createClass({displayName: "FilterableTrackTable
   },
   minRowsOnPage: 1,
   maxRowsOnPage: 300,
-  handleUserInput: function(playlistValue, filterTrack, rowsOnPage){
-
-    var playlistId = Number.parseInt(playlistValue);
+  handleUserInput: function(playlistId, filterTrack, rowsOnPage){
 
     var rowsOnPageInt = Number.parseInt(rowsOnPage);
     if (isNaN(rowsOnPageInt) || rowsOnPageInt < this.minRowsOnPage){
@@ -538,7 +536,7 @@ var FilterableTrackTable = React.createClass({displayName: "FilterableTrackTable
       rowsOnPageInt = this.maxRowsOnPage;
     }
 
-    var selectedPlaylist = { id: 0, name: '' };
+    var selectedPlaylist = { id: "0", name: '' };
     this.state.playlists.forEach(function(playlist){
       if (playlist.id === playlistId){
         selectedPlaylist = playlist;
@@ -576,7 +574,7 @@ var FilterableTrackTable = React.createClass({displayName: "FilterableTrackTable
 
 React.render(
   React.createElement(FilterableTrackTable, {
-      playlistUrl: "app_dev.php/playlist", 
-      trackByPlaylistUrl: "app_dev.php/trackByPlaylist"}),
+      playlistUrl: "playlist", 
+      trackByPlaylistUrl: "trackByPlaylist"}),
   document.getElementById('content')
 );
