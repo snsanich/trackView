@@ -94,6 +94,7 @@ var NavigationWheel = React.createClass({displayName: "NavigationWheel",
   PREV: 'prev',
   NEXT: 'next',
   SKIP: '...',
+  EXTRASKIP: '???',
   PAGES_IN_ROLL: 7,
   PAGES_AT_SIZE: 3,
   getInitialProps: function(){
@@ -166,7 +167,7 @@ var NavigationWheel = React.createClass({displayName: "NavigationWheel",
       }
       
       pages.push({
-        'value': this.SKIP
+        'value': this.EXTRASKIP
       });
       pages.push({
         'data-page-number': this.maxPage,
