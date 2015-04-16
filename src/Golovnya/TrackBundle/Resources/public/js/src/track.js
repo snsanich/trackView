@@ -166,9 +166,6 @@ var NavigationWheel = React.createClass({displayName: "NavigationWheel",
       }
       
       pages.push({
-        'value': this.SKIP
-      });
-      pages.push({
         'data-page-number': this.maxPage,
         'aria-label': 'page' + this.maxPage,
         'onClick': this.handlePage,      
