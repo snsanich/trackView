@@ -44,7 +44,7 @@ var TrackOrder = React.createClass({displayName: "TrackOrder",
     );
   },
   render: function(){
-    var columns = [];
+    var columns = ['name'];
     this.props.fields.forEach(function(field){
 
       var buttons = [];
