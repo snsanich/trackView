@@ -8,21 +8,7 @@ var PlaylistRow = React.createClass({displayName: "PlaylistRow",
 
 var TrackRow = React.createClass({displayName: "TrackRow",
   render: function(){
-      var list2 = (
-          React.createElement("tr", null,
-              React.createElement("td", null, this.props.track.name),
-              React.createElement("td", null, this.props.track.duration),
-              React.createElement("td", null, this.props.track.producer),
-              React.createElement("td", null, this.props.track.genres)
-          );
-    return (
-      React.createElement("tr", null,
-        list,
-        React.createElement("td", null, this.props.track.duration),
-        React.createElement("td", null, this.props.track.producer),
-        React.createElement("td", null, this.props.track.genres)
-      )
-    );
+      return false;
   }
 });
 
